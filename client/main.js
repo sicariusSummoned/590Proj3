@@ -1,0 +1,1 @@
+//Initialize clientside vars here, hook up events and get document Elements
