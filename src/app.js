@@ -12,7 +12,7 @@ const app = express();
 
 app.use('/assest', express.static(path.resolve(`${__dirname}/../hosted/`)));
 
-app.get('/'(req, res) =>{
+app.get('/', (req, res) => {
   res.sendFile(path.resolve(`${__dirname}/../hosted/index.html`));
 });
 
@@ -22,8 +22,8 @@ const io = socketio(server);
 
 sockets.configure(io);
 
-server.listen(PORT,(err) =>{
-  if(err) {
+server.listen(PORT, (err) => {
+  if (err) {
     throw err;
   }
   console.log(`Listening on port ${PORT}`);
