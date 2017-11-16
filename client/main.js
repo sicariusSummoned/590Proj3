@@ -1,13 +1,19 @@
 //Initialize clientside vars here, hook up events and get document Elements
+let shipImg;
+let shipTurretLargeImg;
+let shipTurretSmallImg;
+let oceanBGImg;
+let explosionImg;
+let bulletImg;
 
 let players = {}; // object to hold all info to draw them on screen
 let bullets = {};
-let decals = {};
+let explosions = [];
 
 // server info
 let socket;
 let hash;
-
+let animationFrame;
 // spriteSheet elements
 
 let mousePos = {
@@ -23,24 +29,37 @@ let debug; // boolean for drawing collision boxes
 
 const init = () => {
   debug = false;
-  
+
   // get image elements from index.html
-  
+  oceanBGImg = document.querySelector("#oceanBG");
+  shipImg = document.querySelector("#ship");
+  shipTurretLargeImg = document.querySelector("#ship_Turret_Large");
+  shipTurretSmallImg = document.querySelector("#ship_Turret_Small");
+  bulletImg = document.querySelector("#bullet");
+  explosionImg = document.querySelector("#explosion");
+
+
   canvas = document.querySelector("#canvas");
   ctx = canvas.getContext('2d');
-  
+
   socket = io.connect();
-  
-  // placeholders for emits from server
-  // socket.on('syncPlayer');
+
+  //emits from server
+  socket.on('newSpawn', mySpawn);
+  socket.on('syncPlayers',syncPlayers);
+  socket.on('syncBullets',syncBullets);
   // socket.on('generateRPC');
-  
+
   // key up / key down event listener
-  
+  document.body.addEventListener('keydown', keyDownHandler);
+  document.body.addEventListener('keyup', keyUpHandler);
   // mouse move listener
-  
+  window.addEventListener('mousemove', function (e) {
+    getMousePosition(canvas, e);
+  });
+
   // click event listener
-  
+  requestAnimationFrame(redraw);
 };
 
 window.onload = init;

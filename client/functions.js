@@ -1,8 +1,13 @@
 //We put all functions here
 
+const mySpawn = (data) =>{
+  hash = data.hash;
+  
+}
+
 // sync player function - takes data from server and updates client data accordingly
 // WARNING, PLAYERS DELETED SERVER-SIDE WILL NOT BE DELETED CLIENT-SIDE
-const syncPlayer = (data) => {
+const syncPlayers = (data) => {
   const keys = Object.keys(data);
 
   for (let i = 0; i < keys.length; i++) {
@@ -17,7 +22,7 @@ const syncPlayer = (data) => {
 
     player.x = receivedPlayer.x;
     player.y = receivedPlayer.y;
-    player.rot = receivedPlayer.rot;
+    player.rotation = receivedPlayer.rotation;
     player.turrets = receivedPlayer.turrets;
 
     //TURNING STATE WILL NOT BE SENT TO CLIENT
@@ -32,7 +37,7 @@ const cullPlayers = (data) => { // delete players we dont need anymore
 };
 
 // sync bullets function - takes data from server and updates client data accordingly
-const syncBullet = (data) => {
+const syncBullets = (data) => {
   const keys = Object.keys(data);
 
   for (let i = 0; i < keys.length; i++) {
@@ -47,7 +52,7 @@ const syncBullet = (data) => {
 
     bullet.x = receivedBullet.x;
     bullet.y = receivedBullet.y;
-    bullet.rot = receivedBullet.rot;
+    bullet.rotation = receivedBullet.rotation;
   }
 };
 
