@@ -27,12 +27,12 @@ const redraw = (time) => {
       shipImg, // our source image
       0, //Source X
       0, //Source Y
-      81, //Source Width 81 pixels
-      221, //Source Height 221 pixels
-      -81 / 2, //Drawing at -81/2 because we translated canvas
-      -221 / 2, //Drawing at -221/2 because we translated canvas
-      81, //Draw Width
-      221 //Draw Height
+      221, //Source Width 81 pixels
+      81, //Source Height 221 pixels
+      -221 / 2, //Drawing at -81/2 because we translated canvas
+      -81 / 2, //Drawing at -221/2 because we translated canvas
+      221, //Draw Width
+      81 //Draw Height
     );
     ctx.restore();
 

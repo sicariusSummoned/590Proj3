@@ -72,7 +72,7 @@ const makeNewPlayer = (sock, playerHash) => {
     y: randY,
     fX: 0,
     fY: 1,
-    rotation: 0,
+    rotation: 90,
     speed: 1,
     turningState: 'none',
     turrets: [
@@ -135,6 +135,22 @@ const serverUpdate = () => {
 
     // move players
     if (player !== null && player !== undefined) {
+      console.log(player.turningState);
+
+      // see if they are rotating or not
+      if (player.turningState === 'right') {
+        player.rotation += 1;
+      }
+
+      if (player.turningState === 'left') {
+        player.rotation -= 1;
+      }
+
+      const asRad = player.rotation * (Math.PI / 180);
+
+      player.fX = Math.cos(asRad);
+      player.fY = Math.sin(asRad);
+
       player.x += player.speed * player.fX;
       player.y += player.speed * player.fY;
 
@@ -173,6 +189,14 @@ const serverUpdate = () => {
   }
 };
 
+// function for changing the turningState of the player
+const playerTurning = (data) => {
+  const player = utility.getPlayerByHash(data.hash);
+  player.turningState = data.turningState;
+
+  utility.setPlayer(player);
+};
+
 // This gets called by app when it runs
 const configure = (ioServer) => {
   io = ioServer;
@@ -198,6 +222,7 @@ const configure = (ioServer) => {
     makeNewPlayer(socket, socket.hash);
 
     // List all socket methods here
+    socket.on('playerTurning', playerTurning);
 
     onDisconnect(socket);
   });

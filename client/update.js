@@ -4,4 +4,7 @@ const update = () =>{
   //update explosions lifetimes
   
   //Scale all bullets based on distance from their half way point
+  
+  //sendTurning
+  sendTurning();
 }

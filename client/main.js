@@ -14,6 +14,9 @@ let explosions = [];
 let socket;
 let hash;
 let animationFrame;
+
+let prevTurningState;
+let turningState;
 // spriteSheet elements
 
 let mousePos = {
@@ -60,6 +63,8 @@ const init = () => {
 
   // click event listener
   requestAnimationFrame(redraw);
+  
+  setInterval(update, 30);
 };
 
 window.onload = init;

@@ -86,12 +86,16 @@ const keyDownHandler = (e) => {
   if (keyPressed === 65 || keyPressed === 37) {
     console.log('LEFT HELD');
     //Set player turning state to 'left'
+    prevTurningState = turningState;
+    turningState = 'left';
   }
 
   //D or Right Arrow
   if (keyPressed === 68 || keyPressed === 39) {
     console.log('RIGHT HELD');
     //Set player turning state to 'right'
+    prevTurningState = turningState;
+    turningState = 'right';
   }
 
 };
@@ -110,6 +114,8 @@ const keyUpHandler = (e) => {
   if (keyPressed === 65 || keyPressed === 37) {
     console.log('LEFT RELEASED');
     //Set player turning state to 'none'
+    prevTurningState = turningState;
+    turningState = 'none';
   }
 
   //S or Down Arrow
@@ -122,6 +128,8 @@ const keyUpHandler = (e) => {
   if (keyPressed === 68 || keyPressed === 39) {
     console.log('RIGHT RELEASED');
     //Set player turning state to 'none'
+    prevTurningState = turningState;
+    turningState = 'none';
   }
 };
 
@@ -131,7 +139,7 @@ const getMousePosition = (canvas, e) => {
   mousePos.x = e.clientX - rect.left;
   mousePos.y = e.clientY - rect.top;
 
-  console.log(`X:${mousePos.x} Y:${mousePos.y}`);
+  // console.log(`X:${mousePos.x} Y:${mousePos.y}`);
 };
 
 // function to get angle between two points
@@ -143,10 +151,15 @@ const degBetweenPoints = (x1, y1, x2, y2) => {
 const sendTurning = () => {
   let packet = {
     hash: hash,
-    turningState: player[hash].turningState,
+    turningState: turningState,
   }
 
-  socket.emit('playerTurning', packet);
+  if(prevTurningState !== turningState) {
+    socket.emit('playerTurning', packet);
+    console.log('SENDING!');
+  } else {
+    console.log('NOT SENDING TURN UPDATE');
+  }
 };
 
 // function for acceleration / throttle

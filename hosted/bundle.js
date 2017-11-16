@@ -27,12 +27,12 @@ var redraw = function redraw(time) {
     ctx.drawImage(shipImg, // our source image
     0, //Source X
     0, //Source Y
-    81, //Source Width 81 pixels
-    221, //Source Height 221 pixels
-    -81 / 2, //Drawing at -81/2 because we translated canvas
-    -221 / 2, //Drawing at -221/2 because we translated canvas
-    81, //Draw Width
-    221 //Draw Height
+    221, //Source Width 81 pixels
+    81, //Source Height 221 pixels
+    -221 / 2, //Drawing at -81/2 because we translated canvas
+    -81 / 2, //Drawing at -221/2 because we translated canvas
+    221, //Draw Width
+    81 //Draw Height
     );
     ctx.restore();
 
@@ -97,12 +97,12 @@ var syncPlayers = function syncPlayers(data) {
       return;
     }
 
-    var _player = players[receivedPlayer.hash];
+    var player = players[receivedPlayer.hash];
 
-    _player.x = receivedPlayer.x;
-    _player.y = receivedPlayer.y;
-    _player.rotation = receivedPlayer.rotation;
-    _player.turrets = receivedPlayer.turrets;
+    player.x = receivedPlayer.x;
+    player.y = receivedPlayer.y;
+    player.rotation = receivedPlayer.rotation;
+    player.turrets = receivedPlayer.turrets;
 
     //TURNING STATE WILL NOT BE SENT TO CLIENT
     //THIS PREVENTS SERVER OVERWRITING CLIENT INPUT
@@ -165,12 +165,16 @@ var keyDownHandler = function keyDownHandler(e) {
   if (keyPressed === 65 || keyPressed === 37) {
     console.log('LEFT HELD');
     //Set player turning state to 'left'
+    prevTurningState = turningState;
+    turningState = 'left';
   }
 
   //D or Right Arrow
   if (keyPressed === 68 || keyPressed === 39) {
     console.log('RIGHT HELD');
     //Set player turning state to 'right'
+    prevTurningState = turningState;
+    turningState = 'right';
   }
 };
 
@@ -188,6 +192,8 @@ var keyUpHandler = function keyUpHandler(e) {
   if (keyPressed === 65 || keyPressed === 37) {
     console.log('LEFT RELEASED');
     //Set player turning state to 'none'
+    prevTurningState = turningState;
+    turningState = 'none';
   }
 
   //S or Down Arrow
@@ -200,6 +206,8 @@ var keyUpHandler = function keyUpHandler(e) {
   if (keyPressed === 68 || keyPressed === 39) {
     console.log('RIGHT RELEASED');
     //Set player turning state to 'none'
+    prevTurningState = turningState;
+    turningState = 'none';
   }
 };
 
@@ -209,7 +217,7 @@ var getMousePosition = function getMousePosition(canvas, e) {
   mousePos.x = e.clientX - rect.left;
   mousePos.y = e.clientY - rect.top;
 
-  console.log('X:' + mousePos.x + ' Y:' + mousePos.y);
+  // console.log(`X:${mousePos.x} Y:${mousePos.y}`);
 };
 
 // function to get angle between two points
@@ -221,10 +229,15 @@ var degBetweenPoints = function degBetweenPoints(x1, y1, x2, y2) {
 var sendTurning = function sendTurning() {
   var packet = {
     hash: hash,
-    turningState: player[hash].turningState
+    turningState: turningState
   };
 
-  socket.emit('playerTurning', packet);
+  if (prevTurningState !== turningState) {
+    socket.emit('playerTurning', packet);
+    console.log('SENDING!');
+  } else {
+    console.log('NOT SENDING TURN UPDATE');
+  }
 };
 
 // function for acceleration / throttle
@@ -264,6 +277,9 @@ var explosions = [];
 var socket = void 0;
 var hash = void 0;
 var animationFrame = void 0;
+
+var prevTurningState = void 0;
+var turningState = void 0;
 // spriteSheet elements
 
 var mousePos = {
@@ -308,6 +324,8 @@ var init = function init() {
 
   // click event listener
   requestAnimationFrame(redraw);
+
+  setInterval(update, 30);
 };
 
 window.onload = init;
@@ -319,4 +337,7 @@ var update = function update() {
   //update explosions lifetimes
 
   //Scale all bullets based on distance from their half way point
+
+  //sendTurning
+  sendTurning();
 };
