@@ -1,12 +1,91 @@
+"use strict";
+
 //This is where we're putting the draw loop
-"use strict";
-"use strict";
+
+var redraw = function redraw(time) {
+  //Call update
+  update();
+
+  //turn off filter
+  ctx.filter = "none";
+
+  //clear screen
+  ctx.clearRect(0, 0, screen.width, screen.height);
+
+  //Draw background
+  ctx.drawImage(oceanBGImg, 0, 0, 1920, 1080, 0, 0, canvas.width, canvas.height);
+
+  //loop and draw all players and their turrets
+  var playerKeys = Object.keys(players);
+  for (var i = 0; i < playerKeys.length; i++) {
+    var player = players[playerKeys[i]];
+
+    //Draw Ship Hull
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    ctx.rotate(player.rotation * (Math.PI / 180));
+    ctx.drawImage(shipImg, // our source image
+    0, //Source X
+    0, //Source Y
+    81, //Source Width 81 pixels
+    221, //Source Height 221 pixels
+    -81 / 2, //Drawing at -81/2 because we translated canvas
+    -221 / 2, //Drawing at -221/2 because we translated canvas
+    81, //Draw Width
+    221 //Draw Height
+    );
+    ctx.restore();
+
+    for (var j = 0; j < player.turrets.length; j++) {
+      //Draw Turrets   
+
+    }
+  }
+
+  //loop and draw all bullets
+  var bulletKeys = Object.keys(bullets);
+  for (var _i = 0; _i < bulletKeys.length; _i++) {
+    var bullet = bullets[bulletKeys[_i]];
+
+    //draw bullet
+    ctx.save();
+    ctx.translate(bullet.x, bullet.y);
+    ctx.rotate(bullet.rotation * (Math.PI / 180));
+
+    /**
+    ctx.drawImage(
+      bulletImg,
+      
+    );
+    **/
+    ctx.restore();
+  }
+
+  //loop and draw all explosions
+  for (var _i2 = 0; _i2 < explosions.length; _i2++) {
+    var explosion = explosions[_i2];
+
+    //draw Explosion
+    /**
+    ctx.drawImage(
+      explosionImg,
+    );
+    **/
+  }
+
+  animationFrame = requestAnimationFrame(redraw);
+};
+'use strict';
 
 //We put all functions here
 
+var mySpawn = function mySpawn(data) {
+  hash = data.hash;
+};
+
 // sync player function - takes data from server and updates client data accordingly
 // WARNING, PLAYERS DELETED SERVER-SIDE WILL NOT BE DELETED CLIENT-SIDE
-var syncPlayer = function syncPlayer(data) {
+var syncPlayers = function syncPlayers(data) {
   var keys = Object.keys(data);
 
   for (var i = 0; i < keys.length; i++) {
@@ -18,11 +97,16 @@ var syncPlayer = function syncPlayer(data) {
       return;
     }
 
-    var player = players[receivedPlayer.hash];
+    var _player = players[receivedPlayer.hash];
 
-    player.x = receivedPlayer.x;
-    player.y = receivedPlayer.y;
-    player.rot = receivedPlayer.rot;
+    _player.x = receivedPlayer.x;
+    _player.y = receivedPlayer.y;
+    _player.rotation = receivedPlayer.rotation;
+    _player.turrets = receivedPlayer.turrets;
+
+    //TURNING STATE WILL NOT BE SENT TO CLIENT
+    //THIS PREVENTS SERVER OVERWRITING CLIENT INPUT
+
   }
 };
 
@@ -31,7 +115,7 @@ var cullPlayers = function cullPlayers(data) {// delete players we dont need any
 };
 
 // sync bullets function - takes data from server and updates client data accordingly
-var syncBullet = function syncBullet(data) {
+var syncBullets = function syncBullets(data) {
   var keys = Object.keys(data);
 
   for (var i = 0; i < keys.length; i++) {
@@ -47,7 +131,7 @@ var syncBullet = function syncBullet(data) {
 
     bullet.x = receivedBullet.x;
     bullet.y = receivedBullet.y;
-    bullet.rot = receivedBullet.rot;
+    bullet.rotation = receivedBullet.rotation;
   }
 };
 
@@ -61,30 +145,125 @@ var generateExplosion = function generateExplosion(data) {
 };
 
 // fire cannon function - notify server bullet has been fired
+var fireCannons = function fireCannons() {
+  var player = players[hash];
+
+  var packet = {
+    ownerHash: hash
+  };
+
+  //send hash for the player firing.
+  socket.emit('playerFiring', packet);
+};
 
 // functions to handle keyUp and keyDown
+var keyDownHandler = function keyDownHandler(e) {
+  var player = players[hash];
+  var keyPressed = e.which;
+
+  //A or Left Arrow
+  if (keyPressed === 65 || keyPressed === 37) {
+    console.log('LEFT HELD');
+    //Set player turning state to 'left'
+  }
+
+  //D or Right Arrow
+  if (keyPressed === 68 || keyPressed === 39) {
+    console.log('RIGHT HELD');
+    //Set player turning state to 'right'
+  }
+};
+
+var keyUpHandler = function keyUpHandler(e) {
+  var player = players[hash];
+  var keyPressed = e.which;
+
+  //W or Up Arrow
+  if (keyPressed === 87 || keyPressed === 38) {
+    console.log('UP RELEASED');
+    //Send throttle up request to server
+  }
+
+  //A or Left Arrow
+  if (keyPressed === 65 || keyPressed === 37) {
+    console.log('LEFT RELEASED');
+    //Set player turning state to 'none'
+  }
+
+  //S or Down Arrow
+  if (keyPressed === 83 || keyPressed === 40) {
+    console.log('DOWN RELEASED');
+    //Send throttle down request to server
+  }
+
+  //D or Right Arrow
+  if (keyPressed === 68 || keyPressed === 39) {
+    console.log('RIGHT RELEASED');
+    //Set player turning state to 'none'
+  }
+};
 
 // function to get mousePosition
+var getMousePosition = function getMousePosition(canvas, e) {
+  var rect = canvas.getBoundingClientRect();
+  mousePos.x = e.clientX - rect.left;
+  mousePos.y = e.clientY - rect.top;
+
+  console.log('X:' + mousePos.x + ' Y:' + mousePos.y);
+};
 
 // function to get angle between two points
+var degBetweenPoints = function degBetweenPoints(x1, y1, x2, y2) {
+  return Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+};
 
 // function to notify server ship is turning
+var sendTurning = function sendTurning() {
+  var packet = {
+    hash: hash,
+    turningState: player[hash].turningState
+  };
+
+  socket.emit('playerTurning', packet);
+};
 
 // function for acceleration / throttle
+var sendThrottle = function sendThrottle(accelerating) {
+
+  var packet = {
+    hash: hash
+  };
+
+  //is the player accelerating or decelerating?
+  if (accelerating) {
+    packet.accelerating = true;
+  } else {
+    packet.accelerating = false;
+  }
+
+  socket.emit('playerThrottling', packet);
+};
 
 // scaling bullet size (for arc)
+var scaleBullet = function scaleBullet(bulletHash) {};
 "use strict";
 
 //Initialize clientside vars here, hook up events and get document Elements
+var shipImg = void 0;
+var shipTurretLargeImg = void 0;
+var shipTurretSmallImg = void 0;
+var oceanBGImg = void 0;
+var explosionImg = void 0;
+var bulletImg = void 0;
 
 var players = {}; // object to hold all info to draw them on screen
 var bullets = {};
-var decals = {};
+var explosions = [];
 
 // server info
 var socket = void 0;
 var hash = void 0;
-
+var animationFrame = void 0;
 // spriteSheet elements
 
 var mousePos = {
@@ -101,23 +280,43 @@ var init = function init() {
   debug = false;
 
   // get image elements from index.html
+  oceanBGImg = document.querySelector("#oceanBG");
+  shipImg = document.querySelector("#ship");
+  shipTurretLargeImg = document.querySelector("#ship_Turret_Large");
+  shipTurretSmallImg = document.querySelector("#ship_Turret_Small");
+  bulletImg = document.querySelector("#bullet");
+  explosionImg = document.querySelector("#explosion");
 
   canvas = document.querySelector("#canvas");
   ctx = canvas.getContext('2d');
 
   socket = io.connect();
 
-  // placeholders for emits from server
-  // socket.on('syncPlayer');
+  //emits from server
+  socket.on('newSpawn', mySpawn);
+  socket.on('syncPlayers', syncPlayers);
+  socket.on('syncBullets', syncBullets);
   // socket.on('generateRPC');
 
   // key up / key down event listener
-
+  document.body.addEventListener('keydown', keyDownHandler);
+  document.body.addEventListener('keyup', keyUpHandler);
   // mouse move listener
+  window.addEventListener('mousemove', function (e) {
+    getMousePosition(canvas, e);
+  });
 
   // click event listener
+  requestAnimationFrame(redraw);
 };
 
 window.onload = init;
-//This is where our update loop goes if we decide to update anything client side
 "use strict";
+
+//This is where our update loop goes if we decide to update anything client side
+
+var update = function update() {
+  //update explosions lifetimes
+
+  //Scale all bullets based on distance from their half way point
+};
