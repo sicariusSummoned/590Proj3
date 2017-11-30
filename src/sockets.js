@@ -135,7 +135,6 @@ const serverUpdate = () => {
 
     // move players
     if (player !== null && player !== undefined) {
-      console.log(player.turningState);
 
       // see if they are rotating or not
       if (player.turningState === 'right') {
@@ -154,20 +153,21 @@ const serverUpdate = () => {
       player.x += player.speed * player.fX;
       player.y += player.speed * player.fY;
 
-      if (player.x > 600) {
+      if (player.x > 1050) {
         player.x = 1;
       }
 
       if (player.x < 0) {
-        player.x = 599;
+        player.x = 1049;
       }
 
-      if (player.y > 600) {
+      if (player.y > 900) {
         player.y = 1;
       }
 
       if (player.y < 0) {
-        player.y = 599;
+        player.y = 899;
+        console.log(player.y);
       }
 
       utility.setPlayer(player);
@@ -192,9 +192,35 @@ const serverUpdate = () => {
 // function for changing the turningState of the player
 const playerTurning = (data) => {
   const player = utility.getPlayerByHash(data.hash);
-  player.turningState = data.turningState;
+  if(player !== null) {
+    player.turningState = data.turningState;
+    utility.setPlayer(player);
+  }
+};
 
-  utility.setPlayer(player);
+// function for changing the speed of the player
+const playerThrottling = (data) => {
+  const player = utility.getPlayerByHash(data.hash);
+  if(player !== null) {
+    if(data.accelerating) {
+      if(player.speed === -0.25) {
+        player.speed = 0; // make the player go back up to not moving
+      } else if(player.speed === 3) {
+        player.speed = 3; // remain the same if max speed
+      } else { // if anything else, we increase
+        player.speed++;
+      }
+    } else { // if DECREASING speed
+      if(player.speed === -0.25) {
+        player.speed = -0.25; // remain the same if min speed
+      } else if(player.speed === 0) {
+        player.speed = -0.25; // remain the same if max speed
+      } else { // if anything else, we increase
+        player.speed--;
+      }
+    }
+    utility.setPlayer(player);
+  }
 };
 
 // This gets called by app when it runs
@@ -223,6 +249,7 @@ const configure = (ioServer) => {
 
     // List all socket methods here
     socket.on('playerTurning', playerTurning);
+    socket.on('playerThrottling', playerThrottling);
 
     onDisconnect(socket);
   });
