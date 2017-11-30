@@ -210,7 +210,8 @@ const playerThrottling = (data) => {
       } else { // if anything else, we increase
         player.speed++;
       }
-    } else { // if DECREASING speed
+    } 
+    if(!data.accelerating) { // if DECREASING speed
       if(player.speed === -0.25) {
         player.speed = -0.25; // remain the same if min speed
       } else if(player.speed === 0) {
