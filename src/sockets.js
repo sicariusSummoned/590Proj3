@@ -77,22 +77,22 @@ const makeNewPlayer = (sock, playerHash) => {
     turningState: 'none',
     turrets: [
       {
-        offsetX: 0,
-        offsetY: 50,
+        offsetX: 16,
+        offsetY: 20,
         rotation: 0,
       },
       {
-        offsetX: 0,
-        offsetY: -50,
+        offsetX: 16,
+        offsetY: -20,
         rotation: 0,
       },
       {
-        offsetX: 20,
+        offsetX: 50,
         offsetY: 0,
         rotation: 0,
       },
       {
-        offsetX: -20,
+        offsetX: -36,
         offsetY: 0,
         rotation: 0,
       },
@@ -135,7 +135,7 @@ const serverUpdate = () => {
 
     // move players
     if (player !== null && player !== undefined) {
-      console.log(player.turningState);
+      //console.log(player.turningState);
 
       // see if they are rotating or not
       if (player.turningState === 'right') {

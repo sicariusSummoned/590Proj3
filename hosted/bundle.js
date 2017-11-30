@@ -27,20 +27,32 @@ var redraw = function redraw(time) {
     ctx.drawImage(shipImg, // our source image
     0, //Source X
     0, //Source Y
-    221, //Source Width 81 pixels
-    81, //Source Height 221 pixels
-    -221 / 2, //Drawing at -81/2 because we translated canvas
-    -81 / 2, //Drawing at -221/2 because we translated canvas
+    221, //Source Width 221 pixels
+    81, //Source Height 81 pixels
+    -221 / 2, //Drawing at -221/2 because we translated canvas
+    -81 / 2, //Drawing at -81/2 because we translated canvas
     221, //Draw Width
     81 //Draw Height
     );
-    ctx.restore();
+
+    //To draw turrets should I not restore? until after all are drawn?
+
+    //Draw Turrets   
+
 
     for (var j = 0; j < player.turrets.length; j++) {
-      //Draw Turrets   
-
+      var turret = player.turrets[j];
+      ctx.save();
+      ctx.translate(turret.offsetX, turret.offsetY);
+      ctx.rotate(turret.rotation);
+      ctx.drawImage(shipTurretLargeImg, 0, 0, 20, //Source width
+      25, //Source Height
+      -20 / 2, -25 / 2, 20, 25);
+      //reset for next turret's offset and rotation
+      ctx.restore();
     }
   }
+  ctx.restore();
 
   //loop and draw all bullets
   var bulletKeys = Object.keys(bullets);
@@ -52,12 +64,8 @@ var redraw = function redraw(time) {
     ctx.translate(bullet.x, bullet.y);
     ctx.rotate(bullet.rotation * (Math.PI / 180));
 
-    /**
-    ctx.drawImage(
-      bulletImg,
-      
-    );
-    **/
+    ctx.drawImage(bulletImg, 0, 0, 20, 10, -20 / 2, -10 / 2, 20, 10);
+
     ctx.restore();
   }
 
