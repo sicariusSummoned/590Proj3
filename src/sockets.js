@@ -153,20 +153,20 @@ const serverUpdate = () => {
       player.x += player.speed * player.fX;
       player.y += player.speed * player.fY;
 
-      if (player.x > 1221) {
-        player.x = -59;
+      if (player.x > 1110) {
+        player.x = -109;
       }
 
-      if (player.x < -221) {
-        player.x = 1059;
+      if (player.x < -110) {
+        player.x = 1099;
       }
 
-      if (player.y > 981) {
-        player.y = -79;
+      if (player.y > 941) {
+        player.y = -40;
       }
 
-      if (player.y < -81) {
-        player.y = 979;
+      if (player.y < -41) {
+        player.y = 940;
         console.log(player.y);
       }
 
