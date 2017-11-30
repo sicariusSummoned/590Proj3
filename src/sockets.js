@@ -161,12 +161,12 @@ const serverUpdate = () => {
         player.x = 1099;
       }
 
-      if (player.y > 941) {
-        player.y = -40;
+      if (player.y > 910) {
+        player.y = -109;
       }
 
-      if (player.y < -41) {
-        player.y = 940;
+      if (player.y < -110) {
+        player.y = 909;
         console.log(player.y);
       }
 
