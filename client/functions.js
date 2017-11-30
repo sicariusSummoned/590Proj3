@@ -97,6 +97,11 @@ const keyDownHandler = (e) => {
     prevTurningState = turningState;
     turningState = 'right';
   }
+  
+  // stop scrolling on screen
+  if(keyPressed === 87 || keyPressed === 38 || keyPressed === 83 || keyPressed === 40) {
+    e.preventDefault();
+  }
 
 };
 
@@ -108,6 +113,7 @@ const keyUpHandler = (e) => {
   if (keyPressed === 87 || keyPressed === 38) {
     console.log('UP RELEASED');
     //Send throttle up request to server
+    sendThrottle(true);
   }
 
   //A or Left Arrow
@@ -122,6 +128,7 @@ const keyUpHandler = (e) => {
   if (keyPressed === 83 || keyPressed === 40) {
     console.log('DOWN RELEASED');
     //Send throttle down request to server
+    sendThrottle(false);
   }
 
   //D or Right Arrow
@@ -164,7 +171,6 @@ const sendTurning = () => {
 
 // function for acceleration / throttle
 const sendThrottle = (accelerating) => {
-
   let packet = {
     hash: hash,
   };
