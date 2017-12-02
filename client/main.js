@@ -59,6 +59,18 @@ const init = () => {
   // mouse move listener
   window.addEventListener('mousemove', function (e) {
     getMousePosition(canvas, e);
+    let player = players[hash];
+    
+    let newRotation = degBetweenPoints(player.x, player.y, mousePos.x, mousePos.y);
+    
+    console.log(newRotation);
+    let packet = {
+      hash: hash,
+      rotation: newRotation,
+    };
+    
+    socket.emit('playerTurretUpdate', packet);
+    
   });
 
   // click event listener

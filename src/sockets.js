@@ -224,6 +224,19 @@ const playerThrottling = (data) => {
   }
 };
 
+const playerTurretUpdate = (data) => {
+  const player = utility.getPlayerByHash(data.hash);
+  
+  if(player !== null) {
+    for(let i = 0; i < player.turrets.length; i++){
+      console.log(data.rotation);
+      
+      player.turrets[i].rotation = data.rotation;
+    }
+  }
+  utility.setPlayer(player);
+};
+
 // This gets called by app when it runs
 const configure = (ioServer) => {
   io = ioServer;
@@ -251,7 +264,7 @@ const configure = (ioServer) => {
     // List all socket methods here
     socket.on('playerTurning', playerTurning);
     socket.on('playerThrottling', playerThrottling);
-
+    socket.on('playerTurretUpdate', playerTurretUpdate);
     onDisconnect(socket);
   });
 };

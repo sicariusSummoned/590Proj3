@@ -44,6 +44,9 @@ var redraw = function redraw(time) {
       var turret = player.turrets[j];
       ctx.save();
       ctx.translate(turret.offsetX, turret.offsetY);
+
+      console.log(turret.rotation);
+
       ctx.rotate(turret.rotation);
       ctx.drawImage(shipTurretLargeImg, 0, 0, 20, //Source width
       25, //Source Height
@@ -249,10 +252,10 @@ var sendTurning = function sendTurning() {
 
   if (prevTurningState !== turningState) {
     socket.emit('playerTurning', packet);
-    console.log('SENDING!');
+    //console.log('SENDING!');
   } else {
-    console.log('NOT SENDING TURN UPDATE');
-  }
+      //console.log('NOT SENDING TURN UPDATE');
+    }
 };
 
 // function for acceleration / throttle
@@ -334,6 +337,17 @@ var init = function init() {
   // mouse move listener
   window.addEventListener('mousemove', function (e) {
     getMousePosition(canvas, e);
+    var player = players[hash];
+
+    var newRotation = degBetweenPoints(player.x, player.y, mousePos.x, mousePos.y);
+
+    console.log(newRotation);
+    var packet = {
+      hash: hash,
+      rotation: newRotation
+    };
+
+    socket.emit('playerTurretUpdate', packet);
   });
 
   // click event listener

@@ -163,9 +163,9 @@ const sendTurning = () => {
 
   if(prevTurningState !== turningState) {
     socket.emit('playerTurning', packet);
-    console.log('SENDING!');
+    //console.log('SENDING!');
   } else {
-    console.log('NOT SENDING TURN UPDATE');
+    //console.log('NOT SENDING TURN UPDATE');
   }
 };
 
