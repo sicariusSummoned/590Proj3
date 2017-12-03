@@ -49,8 +49,8 @@ const init = () => {
 
   //emits from server
   socket.on('newSpawn', mySpawn);
-  socket.on('syncPlayers',syncPlayers);
-  socket.on('syncBullets',syncBullets);
+  socket.on('syncPlayers', syncPlayers);
+  socket.on('syncBullets', syncBullets);
   // socket.on('generateRPC');
 
   // key up / key down event listener
@@ -59,23 +59,12 @@ const init = () => {
   // mouse move listener
   window.addEventListener('mousemove', function (e) {
     getMousePosition(canvas, e);
-    let player = players[hash];
-    
-    let newRotation = degBetweenPoints(player.x, player.y, mousePos.x, mousePos.y);
-    
-    console.log(newRotation);
-    let packet = {
-      hash: hash,
-      rotation: newRotation,
-    };
-    
-    socket.emit('playerTurretUpdate', packet);
-    
+    turretRotation();
   });
 
   // click event listener
   requestAnimationFrame(redraw);
-  
+
   setInterval(update, 30);
 };
 

@@ -44,11 +44,8 @@ const redraw = (time) => {
     for (let j = 0; j < player.turrets.length; j++) {
       const turret = player.turrets[j];
       ctx.save();
-      ctx.translate(turret.offsetX, turret.offsetY);
-      
-      console.log(turret.rotation);
-      
-      ctx.rotate(turret.rotation);
+      ctx.translate(turret.offsetX, turret.offsetY);      
+      ctx.rotate(turret.rotation *(Math.PI / 180));
       ctx.drawImage(
         shipTurretLargeImg,
         0,

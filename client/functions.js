@@ -1,8 +1,8 @@
 //We put all functions here
 
-const mySpawn = (data) =>{
+const mySpawn = (data) => {
   hash = data.hash;
-  
+
 }
 
 // sync player function - takes data from server and updates client data accordingly
@@ -97,9 +97,9 @@ const keyDownHandler = (e) => {
     prevTurningState = turningState;
     turningState = 'right';
   }
-  
+
   // stop scrolling on screen
-  if(keyPressed === 87 || keyPressed === 38 || keyPressed === 83 || keyPressed === 40) {
+  if (keyPressed === 87 || keyPressed === 38 || keyPressed === 83 || keyPressed === 40) {
     e.preventDefault();
   }
 
@@ -161,7 +161,7 @@ const sendTurning = () => {
     turningState: turningState,
   }
 
-  if(prevTurningState !== turningState) {
+  if (prevTurningState !== turningState) {
     socket.emit('playerTurning', packet);
     //console.log('SENDING!');
   } else {
@@ -183,6 +183,22 @@ const sendThrottle = (accelerating) => {
   }
 
   socket.emit('playerThrottling', packet);
+};
+
+
+const turretRotation = () => {
+  let player = players[hash];
+
+  let newRotation = degBetweenPoints(player.x, player.y, mousePos.x, mousePos.y);
+  newRotation -= player.rotation;
+  console.log(newRotation);
+  let packet = {
+    hash: hash,
+    rotation: newRotation,
+  };
+
+  socket.emit('playerTurretUpdate', packet);
+
 };
 
 // scaling bullet size (for arc)

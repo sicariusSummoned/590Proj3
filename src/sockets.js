@@ -229,7 +229,6 @@ const playerTurretUpdate = (data) => {
   
   if(player !== null) {
     for(let i = 0; i < player.turrets.length; i++){
-      console.log(data.rotation);
       
       player.turrets[i].rotation = data.rotation;
     }
