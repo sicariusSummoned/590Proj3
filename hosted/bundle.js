@@ -51,8 +51,8 @@ var redraw = function redraw(time) {
       //reset for next turret's offset and rotation
       ctx.restore();
     }
+    ctx.restore();
   }
-  ctx.restore();
 
   //loop and draw all bullets
   var bulletKeys = Object.keys(bullets);
