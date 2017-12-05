@@ -237,38 +237,40 @@ const playerTurretUpdate = (data) => {
 
 // function to ceate a new bullet for the player that was firing
 const playerFiring = (data) => {
-  console.log(`fire!`);
+  console.log('fire!');
 
-  let player = utility.getPlayerByHash(data.ownerHash);
+  const player = utility.getPlayerByHash(data.ownerHash);
 
   console.log(player.turrets.length);
   for (let i = 0; i < player.turrets.length; i++) {
-    let turret = player.turrets[i];
+    const turret = player.turrets[i];
     console.log(`In loop ${i}`);
     console.log(`turrOffsets: ${turret.offsetX} ${turret.offsetY}`);
 
-    const hash = xxh.h32(`${Math.random()*3}${new Date().getTime}`, 0xCAFEBABE).toString(16);
+    const hash = xxh.h32(`${Math.random() * 3}${new Date().getTime}`, 0xCAFEBABE).toString(16);
     console.log(hash);
 
-    const rotation = turret.rotation + player.rotation
-    
+    const rotation = turret.rotation + player.rotation;
+
     const turRotAsRad = rotation * (Math.PI / 180);
 
-    const playRotAsRad = player.rotation * (Math.PI/ 180);
-    
-    let bulletfX = Math.cos(turRotAsRad);
-    let bulletfY = Math.sin(turRotAsRad);
-    
-    
-    //x' = x cos(theta) - y sin(theta)
-    //y' = y cos(theta) + x sin(theta)
-    
-    let newX = turret.offsetX*Math.cos(playRotAsRad) - turret.offsetY*Math.sin(playRotAsRad);
-    let newY = turret.offsetY*Math.cos(playRotAsRad) + turret.offsetX*Math.sin(playRotAsRad);
+    const playRotAsRad = player.rotation * (Math.PI / 180);
+
+    const bulletfX = Math.cos(turRotAsRad);
+    const bulletfY = Math.sin(turRotAsRad);
+
+
+    // x' = x cos(theta) - y sin(theta)
+    // y' = y cos(theta) + x sin(theta)
+
+    let newX = turret.offsetX * Math.cos(playRotAsRad);
+    newX -= turret.offsetY * Math.sin(playRotAsRad);
+    let newY = turret.offsetY * Math.cos(playRotAsRad);
+    newY += turret.offsetX * Math.sin(playRotAsRad);
 
     const Bullet = {
       ownerHash: data.ownerHash,
-      hash: hash,
+      hash,
       x: player.x + newX,
       y: player.y + newY,
       fX: bulletfX,
