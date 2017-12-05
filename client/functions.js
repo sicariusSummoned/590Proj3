@@ -67,13 +67,10 @@ const generateExplosion = (data) => {
 
 // fire cannon function - notify server bullet has been fired
 const fireCannons = () => {
-  let player = players[hash];
+  
 
   let packet = {
     ownerHash: hash,
-    playerTurrets: player.turrets,
-    x: player.x,
-    y: player.y,
   };
   
   console.log('fire!');

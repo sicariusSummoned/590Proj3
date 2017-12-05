@@ -154,13 +154,9 @@ var generateExplosion = function generateExplosion(data) {
 
 // fire cannon function - notify server bullet has been fired
 var fireCannons = function fireCannons() {
-  var player = players[hash];
 
   var packet = {
-    ownerHash: hash,
-    playerTurrets: player.turrets,
-    x: player.x,
-    y: player.y
+    ownerHash: hash
   };
 
   console.log('fire!');

@@ -226,7 +226,7 @@ const playerThrottling = (data) => {
 const playerTurretUpdate = (data) => {
   const player = utility.getPlayerByHash(data.hash);
 
-  
+
   if (player !== null) {
     for (let i = 0; i < player.turrets.length; i++) {
       player.turrets[i].rotation = data.rotation;
@@ -239,17 +239,34 @@ const playerTurretUpdate = (data) => {
 const playerFiring = (data) => {
   console.log(`fire!`);
 
-  for (let i = 0; i < data.playerTurrets.length; i++) {
+  let player = utility.getPlayerByHash(data.ownerHash);
+
+  console.log(player.turrets.length);
+  for (let i = 0; i < player.turrets.length; i++) {
+    let turret = player.turrets[i];
+    console.log(`In loop ${i}`);
+    console.log(`turrOffsets: ${turret.offsetX} ${turret.offsetY}`);
+
+    const hash = xxh.h32(`${Math.random()*3}${new Date().getTime}`, 0xCAFEBABE).toString(16);
+    console.log(hash);
+
+    const rotation = turret.rotation + player.rotation
+    
+    const turRotAsRad = rotation * (Math.PI / 180);
+
+    let bulletfX = Math.cos(turRotAsRad);
+    let bulletfY = Math.sin(turRotAsRad);
+
     const Bullet = {
-      hash: data.ownerHash,
-      x: data.x + data.playerTurrets[0].offsetX,
-      y: data.y + data.playerTurrets[0].offsetY,
-      fX: 0,
-      fY: 1,
-      rotation: data.playerTurrets[0].rotation,
+      ownerHash: data.ownerHash,
+      hash: hash,
+      x: player.x + turret.offsetX,
+      y: player.y + turret.offsetY,
+      fX: bulletfX,
+      fY: bulletfY,
+      rotation: turret.rotation + player.rotation,
       speed: 6,
     };
-
     utility.setBullet(Bullet);
   }
 };
@@ -276,7 +293,6 @@ const configure = (ioServer) => {
     socket.hash = hash;
 
     // Spawn new player at hash
-
     makeNewPlayer(socket, socket.hash);
 
     // List all socket methods here
