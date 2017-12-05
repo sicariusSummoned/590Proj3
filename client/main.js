@@ -63,6 +63,10 @@ const init = () => {
   });
 
   // click event listener
+  window.addEventListener('click', function (e) {
+    fireCannons();
+  });
+  
   requestAnimationFrame(redraw);
 
   setInterval(update, 30);

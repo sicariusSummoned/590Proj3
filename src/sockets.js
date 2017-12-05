@@ -135,7 +135,6 @@ const serverUpdate = () => {
 
     // move players
     if (player !== null && player !== undefined) {
-
       // see if they are rotating or not
       if (player.turningState === 'right') {
         player.rotation += 1;
@@ -192,7 +191,7 @@ const serverUpdate = () => {
 // function for changing the turningState of the player
 const playerTurning = (data) => {
   const player = utility.getPlayerByHash(data.hash);
-  if(player !== null) {
+  if (player !== null) {
     player.turningState = data.turningState;
     utility.setPlayer(player);
   }
@@ -201,20 +200,20 @@ const playerTurning = (data) => {
 // function for changing the speed of the player
 const playerThrottling = (data) => {
   const player = utility.getPlayerByHash(data.hash);
-  if(player !== null) {
-    if(data.accelerating) {
-      if(player.speed === -0.25) {
+  if (player !== null) {
+    if (data.accelerating) {
+      if (player.speed === -0.25) {
         player.speed = 0; // make the player go back up to not moving
-      } else if(player.speed === 3) {
+      } else if (player.speed === 3) {
         player.speed = 3; // remain the same if max speed
       } else { // if anything else, we increase
         player.speed++;
       }
-    } 
-    if(!data.accelerating) { // if DECREASING speed
-      if(player.speed === -0.25) {
+    }
+    if (!data.accelerating) { // if DECREASING speed
+      if (player.speed === -0.25) {
         player.speed = -0.25; // remain the same if min speed
-      } else if(player.speed === 0) {
+      } else if (player.speed === 0) {
         player.speed = -0.25; // remain the same if max speed
       } else { // if anything else, we increase
         player.speed--;
@@ -226,15 +225,35 @@ const playerThrottling = (data) => {
 
 const playerTurretUpdate = (data) => {
   const player = utility.getPlayerByHash(data.hash);
+
   
-  if(player !== null) {
-    for(let i = 0; i < player.turrets.length; i++){
-      
+  if (player !== null) {
+    for (let i = 0; i < player.turrets.length; i++) {
       player.turrets[i].rotation = data.rotation;
     }
   }
   utility.setPlayer(player);
 };
+
+// function to ceate a new bullet for the player that was firing
+const playerFiring = (data) => {
+  console.log(`fire!`);
+
+  for (let i = 0; i < data.playerTurrets.length; i++) {
+    const Bullet = {
+      hash: data.ownerHash,
+      x: data.x + data.playerTurrets[0].offsetX,
+      y: data.y + data.playerTurrets[0].offsetY,
+      fX: 0,
+      fY: 1,
+      rotation: data.playerTurrets[0].rotation,
+      speed: 6,
+    };
+
+    utility.setBullet(Bullet);
+  }
+};
+
 
 // This gets called by app when it runs
 const configure = (ioServer) => {
@@ -264,6 +283,7 @@ const configure = (ioServer) => {
     socket.on('playerTurning', playerTurning);
     socket.on('playerThrottling', playerThrottling);
     socket.on('playerTurretUpdate', playerTurretUpdate);
+    socket.on('playerFiring', playerFiring);
     onDisconnect(socket);
   });
 };

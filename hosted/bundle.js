@@ -157,8 +157,13 @@ var fireCannons = function fireCannons() {
   var player = players[hash];
 
   var packet = {
-    ownerHash: hash
+    ownerHash: hash,
+    playerTurrets: player.turrets,
+    x: player.x,
+    y: player.y
   };
+
+  console.log('fire!');
 
   //send hash for the player firing.
   socket.emit('playerFiring', packet);
@@ -352,6 +357,10 @@ var init = function init() {
   });
 
   // click event listener
+  window.addEventListener('click', function (e) {
+    fireCannons();
+  });
+
   requestAnimationFrame(redraw);
 
   setInterval(update, 30);
