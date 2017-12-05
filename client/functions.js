@@ -67,12 +67,12 @@ const generateExplosion = (data) => {
 
 // fire cannon function - notify server bullet has been fired
 const fireCannons = () => {
-  
+
 
   let packet = {
     ownerHash: hash,
   };
-  
+
   console.log('fire!');
 
   //send hash for the player firing.
@@ -190,14 +190,35 @@ const sendThrottle = (accelerating) => {
 
 const turretRotation = () => {
   let player = players[hash];
-
-  let newRotation = degBetweenPoints(player.x, player.y, mousePos.x, mousePos.y);
-  newRotation -= player.rotation;
-  console.log(newRotation);
   let packet = {
     hash: hash,
-    rotation: newRotation,
+    rotations: [],
   };
+
+
+  let playerRotAsRad = player.rotation * (Math.PI/180)
+  
+  //Rotating around the origin
+  //x' = x cos(theta) - y sin(theta)
+  //y' = y cos(theta) + x sin(theta)
+
+  for (let i = 0; i < player.turrets.length; i++) {
+    let turret = player.turrets[i];
+    
+    
+    
+    let newXOffset = turret.offsetX * Math.cos(playerRotAsRad) - turret.offsetY * Math.sin(playerRotAsRad);
+    let newYOffset = turret.offsetY * Math.cos(playerRotAsRad) + turret.offsetX * Math.sin(playerRotAsRad);
+    
+    let newRotation = degBetweenPoints(player.x + newXOffset, player.y + newYOffset, mousePos.x, mousePos.y);
+    
+    newRotation -= player.rotation;
+
+    packet.rotations[i]= newRotation;
+  }
+
+  console.log('packet!');
+  console.dir(packet);
 
   socket.emit('playerTurretUpdate', packet);
 

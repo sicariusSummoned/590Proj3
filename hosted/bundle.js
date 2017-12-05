@@ -274,14 +274,32 @@ var sendThrottle = function sendThrottle(accelerating) {
 
 var turretRotation = function turretRotation() {
   var player = players[hash];
-
-  var newRotation = degBetweenPoints(player.x, player.y, mousePos.x, mousePos.y);
-  newRotation -= player.rotation;
-  console.log(newRotation);
   var packet = {
     hash: hash,
-    rotation: newRotation
+    rotations: []
   };
+
+  var playerRotAsRad = player.rotation * (Math.PI / 180);
+
+  //Rotating around the origin
+  //x' = x cos(theta) - y sin(theta)
+  //y' = y cos(theta) + x sin(theta)
+
+  for (var i = 0; i < player.turrets.length; i++) {
+    var turret = player.turrets[i];
+
+    var newXOffset = turret.offsetX * Math.cos(playerRotAsRad) - turret.offsetY * Math.sin(playerRotAsRad);
+    var newYOffset = turret.offsetY * Math.cos(playerRotAsRad) + turret.offsetX * Math.sin(playerRotAsRad);
+
+    var newRotation = degBetweenPoints(player.x + newXOffset, player.y + newYOffset, mousePos.x, mousePos.y);
+
+    newRotation -= player.rotation;
+
+    packet.rotations[i] = newRotation;
+  }
+
+  console.log('packet!');
+  console.dir(packet);
 
   socket.emit('playerTurretUpdate', packet);
 };

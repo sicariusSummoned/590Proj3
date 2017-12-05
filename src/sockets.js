@@ -229,7 +229,7 @@ const playerTurretUpdate = (data) => {
 
   if (player !== null) {
     for (let i = 0; i < player.turrets.length; i++) {
-      player.turrets[i].rotation = data.rotation;
+      player.turrets[i].rotation = data.rotations[i];
     }
   }
   utility.setPlayer(player);
@@ -254,14 +254,23 @@ const playerFiring = (data) => {
     
     const turRotAsRad = rotation * (Math.PI / 180);
 
+    const playRotAsRad = player.rotation * (Math.PI/ 180);
+    
     let bulletfX = Math.cos(turRotAsRad);
     let bulletfY = Math.sin(turRotAsRad);
+    
+    
+    //x' = x cos(theta) - y sin(theta)
+    //y' = y cos(theta) + x sin(theta)
+    
+    let newX = turret.offsetX*Math.cos(playRotAsRad) - turret.offsetY*Math.sin(playRotAsRad);
+    let newY = turret.offsetY*Math.cos(playRotAsRad) + turret.offsetX*Math.sin(playRotAsRad);
 
     const Bullet = {
       ownerHash: data.ownerHash,
       hash: hash,
-      x: player.x + turret.offsetX,
-      y: player.y + turret.offsetY,
+      x: player.x + newX,
+      y: player.y + newY,
       fX: bulletfX,
       fY: bulletfY,
       rotation: turret.rotation + player.rotation,
