@@ -2,7 +2,7 @@
   "name": "590proj3",
   "version": "1.0.0",
   "engines": {
-    "node": "8.5.0",
+    "node": "v8.5.0",
     "npm": "5.5.1"
   },
   "description": "",
