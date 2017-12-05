@@ -6,12 +6,13 @@ const utility = require('./gameUtilities.js');
 
 let runOnce = false;
 
-// Here is where we should put all our socket methods
 
+
+// Here is where we should put all our socket methods
 // send Players
-const sendPlayers = () => {
+const sendPlayers = (roomNum) => {
   const sendable = {};
-  const serverPlayers = utility.getPlayers();
+  const serverPlayers = utility.getPlayersInRoom(roomNum);
   const keys = Object.keys(serverPlayers);
 
   for (let i = 0; i < keys.length; i++) {
@@ -26,15 +27,15 @@ const sendPlayers = () => {
   }
 
   if (Object.keys(sendable).length > 0) {
-    io.sockets.in('room1').emit('syncPlayers', sendable);
+    io.sockets.in(`${roomNum}`).emit('syncPlayers', sendable);
   }
   return true;
 };
 
 // send Bullets
-const sendBullets = () => {
+const sendBullets = (roomNum) => {
   const sendable = {};
-  const serverBullets = utility.getBullets();
+  const serverBullets = utility.getBulletsInRoom(roomNum);
   const keys = Object.keys(serverBullets);
 
   for (let i = 0; i < keys.length; i++) {
@@ -48,25 +49,26 @@ const sendBullets = () => {
   }
 
   if (Object.keys(sendable).length > 0) {
-    io.sockets.in('room1').emit('syncBullets', sendable);
+    io.sockets.in(`${roomNum}`).emit('syncBullets', sendable);
   }
   return true;
 };
 
-const sendAll = () => {
-  sendBullets();
-  sendPlayers();
+const sendAll = (roomNum) => {
+  sendBullets(roomNum);
+  sendPlayers(roomNum);
 };
 
 
 // initialize new player
-const makeNewPlayer = (sock, playerHash) => {
+const makeNewPlayer = (sock, playerHash, roomNum) => {
   const socket = sock;
 
   const randX = Math.floor(Math.random() * 1000);
   const randY = Math.floor(Math.random() * 800);
 
   const Player = {
+    room: roomNum,
     hash: playerHash,
     x: randX,
     y: randY,
@@ -99,12 +101,12 @@ const makeNewPlayer = (sock, playerHash) => {
     ],
   };
 
-  utility.setPlayer(Player);
+  utility.setPlayerInRoom(Player,roomNum);
 
   // Send new player to the correct socket.
 
   socket.emit('newSpawn', utility.getPlayerByHash(Player.hash));
-  sendPlayers();
+  sendPlayersInRoom(roomNum);
 };
 
 // disconnect code
@@ -269,6 +271,7 @@ const playerFiring = (data) => {
     newY += turret.offsetX * Math.sin(playRotAsRad);
 
     const Bullet = {
+      room: player.room,
       ownerHash: data.ownerHash,
       hash,
       x: player.x + newX,

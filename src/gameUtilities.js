@@ -1,35 +1,64 @@
-let players = {};
-let bullets = {};
+let players = [
+  {}, // room 0
+  {}, // room 1
+  {}, // room 2 
+  {}, // room 3
+  {}, // room 4
+];
+let bullets = [
+  {}, // room 0
+  {}, // room 1
+  {}, // room 2
+  {}, // room 3
+  {}, // room 4
+];
 
-const getPlayers = () => players;
-const getBullets = () => bullets;
-
-const getPlayerByHash = data => players[data];
-
-const getBulletByHash = data => bullets[data];
-
-const setPlayers = (data) => {
-  players = data;
+const getPlayersInRoom = (roomNum) => {
+  return players[roomNum];
 };
 
-const setBullets = (data) => {
-  bullets = data;
+const getBulletsInRoom = (roomNum) => {
+  return bullets[roomNum];
 };
 
-const setPlayer = (data) => {
-  players[data.hash] = data;
+const getPlayer = (data) => {
+  players[data];
 };
 
-const setBullet = (data) => {
-  bullets[data.hash] = data;
+const getBullet = (data) => {
+  bullets[data];
 };
 
-const removePlayerByHash = (data) => {
-  delete players[data];
+const setPlayersInRoom = (data, roomNum) => {
+  players[roomNum][data] = data;
 };
 
-const removeBulletByHash = (data) => {
-  delete bullets[data];
+const setBulletsInRoom = (data, roomNum) => {
+  bullets[roomNum][data] = data;
+};
+
+const setPlayerInRoom = (data, roomNum) => {
+  players[roomNum][data.hash] = data;
+};
+
+const setBullet = (data, roomNum) => {
+  bullets[roomNum][data.hash] = data;
+};
+
+const removePlayer = (data) => {
+  for (let i = 0; i < players.length; i++) {
+    if (players[i][data]) {
+      delete players[i][data];
+    }
+  }
+};
+
+const removeBullet = (data) => {
+  for (let i = 0; i < bullets.length; i++) {
+    if(bullets[i][data]){
+        delete bullets[i][data];
+    }
+  }
 };
 
 const checkHit = (x1, y1, r1, x2, y2, r2) => {
@@ -43,15 +72,15 @@ const checkHit = (x1, y1, r1, x2, y2, r2) => {
 };
 
 module.exports = {
-  getPlayers,
-  getBullets,
-  getPlayerByHash,
-  getBulletByHash,
-  setPlayers,
-  setBullets,
+  getPlayersInRoom,
+  getBulletsInRoom,
+  getPlayerInRoomByHash,
+  getBulletInRoomByHash,
+  setPlayersInRoom,
+  setBulletsInRoom,
   setPlayer,
   setBullet,
-  removePlayerByHash,
-  removeBulletByHash,
+  removePlayer,
+  removeBullet,
   checkHit,
 };
