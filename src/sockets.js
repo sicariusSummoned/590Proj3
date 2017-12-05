@@ -32,6 +32,12 @@ const sendPlayers = (roomNum) => {
   return true;
 };
 
+// delete Bullet
+const deleteBullet = (hash) => {
+  utility.removeBulletByHash(hash);
+  io.sockets.in('room1').emit('deleteBullet', hash);
+};
+
 // send Bullets
 const sendBullets = (roomNum) => {
   const sendable = {};
@@ -180,12 +186,24 @@ const serverUpdate = () => {
     const bullet = bullets[bulletKeys[i]];
 
     if (bullet !== null && bullet !== undefined) {
+      
       bullet.x += bullet.speed * bullet.fX;
       bullet.y += bullet.speed * bullet.fY;
-
-      utility.setBullet(bullet);
+      
+      // calc new distance travelled
+      // calculate distance between firing and where landing
+      let xDist = (bullet.originX - bullet.x) * (bullet.originX - bullet.x);
+      let yDist = (bullet.originY - bullet.y) * (bullet.originY - bullet.y);
+      bullet.distanceTravelled = Math.sqrt(xDist + yDist);
+      
+      if(bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
+        // console.log(`GOING TOO FAR!`);
+        deleteBullet(bullet.hash);
+      } else {
+        utility.setBullet(bullet);
+      }
     } else {
-      console.log('UNDEFINED OR NULL');
+      console.log('UNDEFINED OR NULL BULLET');
     }
   }
 };
@@ -239,7 +257,7 @@ const playerTurretUpdate = (data) => {
 
 // function to ceate a new bullet for the player that was firing
 const playerFiring = (data) => {
-  console.log('fire!');
+  // console.log('fire!');
 
   const player = utility.getPlayerByHash(data.ownerHash);
 
@@ -269,17 +287,31 @@ const playerFiring = (data) => {
     newX -= turret.offsetY * Math.sin(playRotAsRad);
     let newY = turret.offsetY * Math.cos(playRotAsRad);
     newY += turret.offsetX * Math.sin(playRotAsRad);
-
+    
+    // calculate distance between firing and where landing
+    let xDist = (data.mouseX - (player.x + newX)) * (data.mouseX - (player.x + newX));
+    let yDist = (data.mouseY - (player.y + newY)) * (data.mouseY - (player.y + newY));
+    const maxDistance = Math.sqrt(xDist + yDist);
+    
+    // calculate speed fom maxDistance
+    const speed = maxDistance / 100;
+    
     const Bullet = {
       room: player.room,
       ownerHash: data.ownerHash,
       hash,
+      originX: player.x + newX,
+      originY: player.y + newY,
       x: player.x + newX,
       y: player.y + newY,
       fX: bulletfX,
       fY: bulletfY,
+      destX: data.mouseX,
+      destY: data.mouseY,
       rotation: turret.rotation + player.rotation,
-      speed: 6,
+      speed: speed,
+      distanceTravelled: 0,
+      maxDistance: maxDistance,
     };
     utility.setBullet(Bullet);
   }

@@ -51,6 +51,7 @@ const init = () => {
   socket.on('newSpawn', mySpawn);
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
+  socket.on('deleteBullet', deleteBullet);
   // socket.on('generateRPC');
 
   // key up / key down event listener
