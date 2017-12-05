@@ -1,6 +1,10 @@
 {
   "name": "590proj3",
   "version": "1.0.0",
+  "engines": {
+    "node": "7.5.0",
+    "npm": "4.0.5"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
