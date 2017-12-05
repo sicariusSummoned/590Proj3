@@ -68,15 +68,21 @@ const generateExplosion = (data) => {
 // fire cannon function - notify server bullet has been fired
 const fireCannons = () => {
 
-
   let packet = {
     ownerHash: hash,
+    mouseX: mousePos.x,
+    mouseY: mousePos.y,
   };
 
-  console.log('fire!');
+  // console.log('fire!');
 
   //send hash for the player firing.
   socket.emit('playerFiring', packet);
+};
+
+// function to handle deleting a bullet from our bullets array
+const deleteBullet = (data) => {
+  delete bullets[data];
 };
 
 // functions to handle keyUp and keyDown

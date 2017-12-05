@@ -156,13 +156,20 @@ var generateExplosion = function generateExplosion(data) {
 var fireCannons = function fireCannons() {
 
   var packet = {
-    ownerHash: hash
+    ownerHash: hash,
+    mouseX: mousePos.x,
+    mouseY: mousePos.y
   };
 
-  console.log('fire!');
+  // console.log('fire!');
 
   //send hash for the player firing.
   socket.emit('playerFiring', packet);
+};
+
+// function to handle deleting a bullet from our bullets array
+var deleteBullet = function deleteBullet(data) {
+  delete bullets[data];
 };
 
 // functions to handle keyUp and keyDown
@@ -359,6 +366,7 @@ var init = function init() {
   socket.on('newSpawn', mySpawn);
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
+  socket.on('deleteBullet', deleteBullet);
   // socket.on('generateRPC');
 
   // key up / key down event listener
