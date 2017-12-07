@@ -6,7 +6,7 @@ const utility = require('./gameUtilities.js');
 
 let runOnce = false;
 
-let roomPop = [
+const roomPop = [
   0,
   0,
   0,
@@ -69,13 +69,11 @@ const sendBullets = (roomNum) => {
 };
 
 const sendAll = () => {
-
   for (let i = 0; i < roomPop.length; i++) {
-    let roomNum = i;
+    const roomNum = i;
     sendBullets(roomNum);
     sendPlayers(roomNum);
   }
-
 };
 
 
@@ -147,9 +145,8 @@ const onDisconnect = (sock) => {
 };
 
 const serverUpdate = () => {
-
-  for (let i = 0; i < roomPop.length; i++) {
-    roomNum = i;
+  for (let ik = 0; ik < roomPop.length; ik++) {
+    const roomNum = ik;
 
     const bullets = utility.getBulletsInRoom(roomNum);
     const players = utility.getPlayersInRoom(roomNum);
@@ -205,14 +202,13 @@ const serverUpdate = () => {
       const bullet = bullets[bulletKeys[i]];
 
       if (bullet !== null && bullet !== undefined) {
-
         bullet.x += bullet.speed * bullet.fX;
         bullet.y += bullet.speed * bullet.fY;
 
         // calc new distance travelled
         // calculate distance between firing and where landing
-        let xDist = (bullet.originX - bullet.x) * (bullet.originX - bullet.x);
-        let yDist = (bullet.originY - bullet.y) * (bullet.originY - bullet.y);
+        const xDist = (bullet.originX - bullet.x) * (bullet.originX - bullet.x);
+        const yDist = (bullet.originY - bullet.y) * (bullet.originY - bullet.y);
         bullet.distanceTravelled = Math.sqrt(xDist + yDist);
 
         if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
@@ -226,8 +222,6 @@ const serverUpdate = () => {
       }
     }
   }
-
-
 };
 
 // function for changing the turningState of the player
@@ -311,8 +305,8 @@ const playerFiring = (data) => {
     newY += turret.offsetX * Math.sin(playRotAsRad);
 
     // calculate distance between firing and where landing
-    let xDist = (data.mouseX - (player.x + newX)) * (data.mouseX - (player.x + newX));
-    let yDist = (data.mouseY - (player.y + newY)) * (data.mouseY - (player.y + newY));
+    const xDist = (data.mouseX - (player.x + newX)) * (data.mouseX - (player.x + newX));
+    const yDist = (data.mouseY - (player.y + newY)) * (data.mouseY - (player.y + newY));
     const maxDistance = Math.sqrt(xDist + yDist);
 
     // calculate speed fom maxDistance
@@ -331,9 +325,9 @@ const playerFiring = (data) => {
       destX: data.mouseX,
       destY: data.mouseY,
       rotation: turret.rotation + player.rotation,
-      speed: speed,
+      speed,
       distanceTravelled: 0,
-      maxDistance: maxDistance,
+      maxDistance,
     };
     utility.setBullet(Bullet, Bullet.room);
   }
@@ -349,11 +343,6 @@ const configure = (ioServer) => {
 
     setInterval(serverUpdate, 30);
     setInterval(sendAll, 30);
-
-
-
-
-
   }
 
   // This gets called once on every player connection

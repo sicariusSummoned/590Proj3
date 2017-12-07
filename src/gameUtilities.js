@@ -1,11 +1,11 @@
-let players = [
+const players = [
   {}, // room 0
   {}, // room 1
-  {}, // room 2 
+  {}, // room 2
   {}, // room 3
   {}, // room 4
 ];
-let bullets = [
+const bullets = [
   {}, // room 0
   {}, // room 1
   {}, // room 2
@@ -13,13 +13,9 @@ let bullets = [
   {}, // room 4
 ];
 
-const getPlayersInRoom = (roomNum) => {
-  return players[roomNum];
-};
+const getPlayersInRoom = roomNum => players[roomNum];
 
-const getBulletsInRoom = (roomNum) => {
-  return bullets[roomNum];
-};
+const getBulletsInRoom = roomNum => bullets[roomNum];
 
 const getPlayer = (data) => {
   for (let i = 0; i < players.length; i++) {
@@ -27,6 +23,7 @@ const getPlayer = (data) => {
       return players[i][data];
     }
   }
+  return null;
 };
 
 const getBullet = (data) => {
@@ -35,6 +32,7 @@ const getBullet = (data) => {
       return bullets[i][data];
     }
   }
+  return null;
 };
 
 const setPlayersInRoom = (data, roomNum) => {
