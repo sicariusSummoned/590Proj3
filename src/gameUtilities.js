@@ -22,11 +22,19 @@ const getBulletsInRoom = (roomNum) => {
 };
 
 const getPlayer = (data) => {
-  players[data];
+  for (let i = 0; i < players.length; i++) {
+    if (players[i][data]) {
+      return players[i][data];
+    }
+  }
 };
 
 const getBullet = (data) => {
-  bullets[data];
+  for (let i = 0; i < bullets.length; i++) {
+    if (bullets[i][data]) {
+      return bullets[i][data];
+    }
+  }
 };
 
 const setPlayersInRoom = (data, roomNum) => {
@@ -37,7 +45,7 @@ const setBulletsInRoom = (data, roomNum) => {
   bullets[roomNum][data] = data;
 };
 
-const setPlayerInRoom = (data, roomNum) => {
+const setPlayer = (data, roomNum) => {
   players[roomNum][data.hash] = data;
 };
 
@@ -55,8 +63,8 @@ const removePlayer = (data) => {
 
 const removeBullet = (data) => {
   for (let i = 0; i < bullets.length; i++) {
-    if(bullets[i][data]){
-        delete bullets[i][data];
+    if (bullets[i][data]) {
+      delete bullets[i][data];
     }
   }
 };
@@ -74,8 +82,8 @@ const checkHit = (x1, y1, r1, x2, y2, r2) => {
 module.exports = {
   getPlayersInRoom,
   getBulletsInRoom,
-  getPlayerInRoomByHash,
-  getBulletInRoomByHash,
+  getPlayer,
+  getBullet,
   setPlayersInRoom,
   setBulletsInRoom,
   setPlayer,

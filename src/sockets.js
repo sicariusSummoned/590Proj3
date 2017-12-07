@@ -6,7 +6,13 @@ const utility = require('./gameUtilities.js');
 
 let runOnce = false;
 
-
+let roomPop = [
+  0,
+  0,
+  0,
+  0,
+  0,
+];
 
 // Here is where we should put all our socket methods
 // send Players
@@ -18,6 +24,7 @@ const sendPlayers = (roomNum) => {
   for (let i = 0; i < keys.length; i++) {
     const serverPlayer = serverPlayers[keys[i]];
     sendable[serverPlayer.hash] = {
+      room: serverPlayer.room,
       hash: serverPlayer.hash,
       x: serverPlayer.x,
       y: serverPlayer.y,
@@ -33,9 +40,9 @@ const sendPlayers = (roomNum) => {
 };
 
 // delete Bullet
-const deleteBullet = (hash) => {
-  utility.removeBulletByHash(hash);
-  io.sockets.in('room1').emit('deleteBullet', hash);
+const deleteBullet = (hash, roomNum) => {
+  utility.removeBullet(hash);
+  io.sockets.in(`${roomNum}`).emit('deleteBullet', hash);
 };
 
 // send Bullets
@@ -47,6 +54,7 @@ const sendBullets = (roomNum) => {
   for (let i = 0; i < keys.length; i++) {
     const serverBullet = serverBullets[keys[i]];
     sendable[serverBullet.hash] = {
+      room: serverBullet.room,
       hash: serverBullet.hash,
       x: serverBullet.x,
       y: serverBullet.y,
@@ -60,14 +68,21 @@ const sendBullets = (roomNum) => {
   return true;
 };
 
-const sendAll = (roomNum) => {
-  sendBullets(roomNum);
-  sendPlayers(roomNum);
+const sendAll = () => {
+
+  for (let i = 0; i < roomPop.length; i++) {
+    let roomNum = i;
+    sendBullets(roomNum);
+    sendPlayers(roomNum);
+  }
+
 };
 
 
 // initialize new player
 const makeNewPlayer = (sock, playerHash, roomNum) => {
+  console.log(`making player in room ${roomNum}`);
+  roomPop[roomNum]++;
   const socket = sock;
 
   const randX = Math.floor(Math.random() * 1000);
@@ -107,12 +122,12 @@ const makeNewPlayer = (sock, playerHash, roomNum) => {
     ],
   };
 
-  utility.setPlayerInRoom(Player,roomNum);
+  utility.setPlayer(Player, roomNum);
 
   // Send new player to the correct socket.
 
-  socket.emit('newSpawn', utility.getPlayerByHash(Player.hash));
-  sendPlayersInRoom(roomNum);
+  socket.emit('newSpawn', utility.getPlayer(Player.hash));
+  sendPlayers(roomNum);
 };
 
 // disconnect code
@@ -123,103 +138,110 @@ const onDisconnect = (sock) => {
     console.log('user disconnected');
 
     // remove player data from players object
-    utility.removePlayerByHash(socket.hash);
+    utility.removePlayer(socket.hash);
     // tell socket to leave
     socket.leave();
 
-    sendPlayers();
+    sendAll();
   });
 };
 
 const serverUpdate = () => {
-  const bullets = utility.getBullets();
-  const players = utility.getPlayers();
 
-  const bulletKeys = Object.keys(bullets);
-  const playerKeys = Object.keys(players);
+  for (let i = 0; i < roomPop.length; i++) {
+    roomNum = i;
 
-  for (let i = 0; i < playerKeys.length; i++) {
-    const player = players[playerKeys[i]];
+    const bullets = utility.getBulletsInRoom(roomNum);
+    const players = utility.getPlayersInRoom(roomNum);
 
-    // move players
-    if (player !== null && player !== undefined) {
-      // see if they are rotating or not
-      if (player.turningState === 'right') {
-        player.rotation += 1;
+    const bulletKeys = Object.keys(bullets);
+    const playerKeys = Object.keys(players);
+
+    for (let i = 0; i < playerKeys.length; i++) {
+      const player = players[playerKeys[i]];
+
+      // move players
+      if (player !== null && player !== undefined) {
+        // see if they are rotating or not
+        if (player.turningState === 'right') {
+          player.rotation += 1;
+        }
+
+        if (player.turningState === 'left') {
+          player.rotation -= 1;
+        }
+
+        const asRad = player.rotation * (Math.PI / 180);
+
+        player.fX = Math.cos(asRad);
+        player.fY = Math.sin(asRad);
+
+        player.x += player.speed * player.fX;
+        player.y += player.speed * player.fY;
+
+        if (player.x > 1110) {
+          player.x = -109;
+        }
+
+        if (player.x < -110) {
+          player.x = 1099;
+        }
+
+        if (player.y > 910) {
+          player.y = -109;
+        }
+
+        if (player.y < -110) {
+          player.y = 909;
+          console.log(player.y);
+        }
+
+        utility.setPlayer(player, roomNum);
       }
-
-      if (player.turningState === 'left') {
-        player.rotation -= 1;
-      }
-
-      const asRad = player.rotation * (Math.PI / 180);
-
-      player.fX = Math.cos(asRad);
-      player.fY = Math.sin(asRad);
-
-      player.x += player.speed * player.fX;
-      player.y += player.speed * player.fY;
-
-      if (player.x > 1110) {
-        player.x = -109;
-      }
-
-      if (player.x < -110) {
-        player.x = 1099;
-      }
-
-      if (player.y > 910) {
-        player.y = -109;
-      }
-
-      if (player.y < -110) {
-        player.y = 909;
-        console.log(player.y);
-      }
-
-      utility.setPlayer(player);
     }
-  }
 
-  // move bullets
-  for (let i = 0; i < bulletKeys.length; i++) {
-    const bullet = bullets[bulletKeys[i]];
+    // move bullets
+    for (let i = 0; i < bulletKeys.length; i++) {
+      const bullet = bullets[bulletKeys[i]];
 
-    if (bullet !== null && bullet !== undefined) {
-      
-      bullet.x += bullet.speed * bullet.fX;
-      bullet.y += bullet.speed * bullet.fY;
-      
-      // calc new distance travelled
-      // calculate distance between firing and where landing
-      let xDist = (bullet.originX - bullet.x) * (bullet.originX - bullet.x);
-      let yDist = (bullet.originY - bullet.y) * (bullet.originY - bullet.y);
-      bullet.distanceTravelled = Math.sqrt(xDist + yDist);
-      
-      if(bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
-        // console.log(`GOING TOO FAR!`);
-        deleteBullet(bullet.hash);
+      if (bullet !== null && bullet !== undefined) {
+
+        bullet.x += bullet.speed * bullet.fX;
+        bullet.y += bullet.speed * bullet.fY;
+
+        // calc new distance travelled
+        // calculate distance between firing and where landing
+        let xDist = (bullet.originX - bullet.x) * (bullet.originX - bullet.x);
+        let yDist = (bullet.originY - bullet.y) * (bullet.originY - bullet.y);
+        bullet.distanceTravelled = Math.sqrt(xDist + yDist);
+
+        if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
+          // console.log(`GOING TOO FAR!`);
+          deleteBullet(bullet.hash);
+        } else {
+          utility.setBullet(bullet, bullet.room);
+        }
       } else {
-        utility.setBullet(bullet);
+        console.log('UNDEFINED OR NULL BULLET');
       }
-    } else {
-      console.log('UNDEFINED OR NULL BULLET');
     }
   }
+
+
 };
 
 // function for changing the turningState of the player
 const playerTurning = (data) => {
-  const player = utility.getPlayerByHash(data.hash);
+  const player = utility.getPlayer(data.hash);
   if (player !== null) {
     player.turningState = data.turningState;
-    utility.setPlayer(player);
+    utility.setPlayer(player, player.room);
   }
 };
 
 // function for changing the speed of the player
 const playerThrottling = (data) => {
-  const player = utility.getPlayerByHash(data.hash);
+  const player = utility.getPlayer(data.hash);
   if (player !== null) {
     if (data.accelerating) {
       if (player.speed === -0.25) {
@@ -239,12 +261,12 @@ const playerThrottling = (data) => {
         player.speed--;
       }
     }
-    utility.setPlayer(player);
+    utility.setPlayer(player, player.room);
   }
 };
 
 const playerTurretUpdate = (data) => {
-  const player = utility.getPlayerByHash(data.hash);
+  const player = utility.getPlayer(data.hash);
 
 
   if (player !== null) {
@@ -252,14 +274,14 @@ const playerTurretUpdate = (data) => {
       player.turrets[i].rotation = data.rotations[i];
     }
   }
-  utility.setPlayer(player);
+  utility.setPlayer(player, player.room);
 };
 
 // function to ceate a new bullet for the player that was firing
 const playerFiring = (data) => {
   // console.log('fire!');
 
-  const player = utility.getPlayerByHash(data.ownerHash);
+  const player = utility.getPlayer(data.ownerHash);
 
   console.log(player.turrets.length);
   for (let i = 0; i < player.turrets.length; i++) {
@@ -287,15 +309,15 @@ const playerFiring = (data) => {
     newX -= turret.offsetY * Math.sin(playRotAsRad);
     let newY = turret.offsetY * Math.cos(playRotAsRad);
     newY += turret.offsetX * Math.sin(playRotAsRad);
-    
+
     // calculate distance between firing and where landing
     let xDist = (data.mouseX - (player.x + newX)) * (data.mouseX - (player.x + newX));
     let yDist = (data.mouseY - (player.y + newY)) * (data.mouseY - (player.y + newY));
     const maxDistance = Math.sqrt(xDist + yDist);
-    
+
     // calculate speed fom maxDistance
     const speed = maxDistance / 100;
-    
+
     const Bullet = {
       room: player.room,
       ownerHash: data.ownerHash,
@@ -313,7 +335,7 @@ const playerFiring = (data) => {
       distanceTravelled: 0,
       maxDistance: maxDistance,
     };
-    utility.setBullet(Bullet);
+    utility.setBullet(Bullet, Bullet.room);
   }
 };
 
@@ -324,22 +346,45 @@ const configure = (ioServer) => {
 
   if (!runOnce) {
     runOnce = true;
+
     setInterval(serverUpdate, 30);
     setInterval(sendAll, 30);
+
+
+
+
+
   }
 
   // This gets called once on every player connection
   io.on('connection', (sock) => {
     const socket = sock;
     console.log('connection started');
-    socket.join('room1');
+
+    let roomToJoin = 0;
+
+    if (roomPop[0] <= 3) {
+      roomToJoin = 0;
+    } else if (roomPop[1] <= 3) {
+      roomToJoin = 1;
+    } else if (roomPop[2] <= 3) {
+      roomToJoin = 2;
+    } else if (roomPop[3] <= 3) {
+      roomToJoin = 3;
+    } else if (roomPop[4] <= 3) {
+      roomToJoin = 4;
+    } else {
+      return;
+    }
+
+    socket.join(`${roomToJoin}`);
 
     const hash = xxh.h32(`${socket.id}${new Date().getTime}`, 0xCAFEBABE).toString(16);
 
     socket.hash = hash;
 
     // Spawn new player at hash
-    makeNewPlayer(socket, socket.hash);
+    makeNewPlayer(socket, socket.hash, roomToJoin);
 
     // List all socket methods here
     socket.on('playerTurning', playerTurning);
