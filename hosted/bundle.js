@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 //This is where we're putting the draw loop
 
@@ -81,6 +81,38 @@ var redraw = function redraw(time) {
     **/
   }
 
+  //update all UI elements
+  if (players[hash]) {
+
+    roomUIText.textContent = '#' + (players[hash].room + 1);
+
+    //Update Gun status
+    gunsUIText.textContent = 'Ready to Fire!';
+    //Update Engine status
+
+    var engineStatusText = '';
+    switch (players[hash].speed) {
+      case 0:
+        engineStatusText = 'Idling';
+        break;
+      case 1:
+        engineStatusText = 'Quarter Speed Ahead';
+        break;
+      case 2:
+        engineStatusText = 'Half Speed Ahead';
+        break;
+      case 3:
+        engineStatusText = 'Full Speed Ahead';
+        break;
+      default:
+        engineStatusText = 'Full Reverse';
+        break;
+    }
+    enginesUIText.textContent = '' + engineStatusText;
+  } else {
+    console.log("Don't have player yet.");
+  }
+
   animationFrame = requestAnimationFrame(redraw);
 };
 'use strict';
@@ -111,7 +143,8 @@ var syncPlayers = function syncPlayers(data) {
     player.y = receivedPlayer.y;
     player.rotation = receivedPlayer.rotation;
     player.turrets = receivedPlayer.turrets;
-
+    player.room = receivedPlayer.room;
+    player.speed = receivedPlayer.speed;
     //TURNING STATE WILL NOT BE SENT TO CLIENT
     //THIS PREVENTS SERVER OVERWRITING CLIENT INPUT
 
@@ -323,6 +356,11 @@ var oceanBGImg = void 0;
 var explosionImg = void 0;
 var bulletImg = void 0;
 
+//UI
+var roomUIText = void 0;
+var gunsUIText = void 0;
+var enginesUIText = void 0;
+
 var players = {}; // object to hold all info to draw them on screen
 var bullets = {};
 var explosions = [];
@@ -357,6 +395,11 @@ var init = function init() {
   bulletImg = document.querySelector("#bullet");
   explosionImg = document.querySelector("#explosion");
 
+  //UI elements
+  roomUIText = document.querySelector("#roomUI");
+  gunsUIText = document.querySelector("#gunsUI");
+  enginesUIText = document.querySelector("#enginesUI");
+
   canvas = document.querySelector("#canvas");
   ctx = canvas.getContext('2d');
 
@@ -367,7 +410,6 @@ var init = function init() {
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
   socket.on('deleteBullet', deleteBullet);
-  // socket.on('generateRPC');
 
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);

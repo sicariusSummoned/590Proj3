@@ -39,13 +39,13 @@ const redraw = (time) => {
 
     //Draw Turrets   
 
-    
-    
+
+
     for (let j = 0; j < player.turrets.length; j++) {
       const turret = player.turrets[j];
       ctx.save();
-      ctx.translate(turret.offsetX, turret.offsetY);      
-      ctx.rotate(turret.rotation *(Math.PI / 180));
+      ctx.translate(turret.offsetX, turret.offsetY);
+      ctx.rotate(turret.rotation * (Math.PI / 180));
       ctx.drawImage(
         shipTurretLargeImg,
         0,
@@ -59,7 +59,7 @@ const redraw = (time) => {
       //reset for next turret's offset and rotation
       ctx.restore();
     }
-      ctx.restore();
+    ctx.restore();
   }
 
 
@@ -79,9 +79,7 @@ const redraw = (time) => {
       0,
       0,
       20,
-      10,
-      -20 / 2,
-      -10 / 2,
+      10, -20 / 2, -10 / 2,
       20,
       10
     );
@@ -100,6 +98,40 @@ const redraw = (time) => {
     );
     **/
   }
+
+  //update all UI elements
+  if (players[hash]) {
+
+    roomUIText.textContent = `#${players[hash].room +1}`;
+
+    //Update Gun status
+    gunsUIText.textContent = `Ready to Fire!`;
+    //Update Engine status
+
+    let engineStatusText = '';
+    switch (players[hash].speed) {
+      case 0:
+        engineStatusText = 'Idling';
+        break;
+      case 1:
+        engineStatusText = 'Quarter Speed Ahead';
+        break;
+      case 2:
+        engineStatusText = 'Half Speed Ahead';
+        break;
+      case 3:
+        engineStatusText = 'Full Speed Ahead';
+        break;
+      default:
+        engineStatusText = 'Full Reverse';
+        break;
+    }
+    enginesUIText.textContent = `${engineStatusText}`;
+  } else {
+    console.log("Don't have player yet.");
+  }
+
+
 
 
   animationFrame = requestAnimationFrame(redraw);

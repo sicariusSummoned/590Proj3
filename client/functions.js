@@ -24,7 +24,8 @@ const syncPlayers = (data) => {
     player.y = receivedPlayer.y;
     player.rotation = receivedPlayer.rotation;
     player.turrets = receivedPlayer.turrets;
-
+    player.room = receivedPlayer.room;
+    player.speed = receivedPlayer.speed;
     //TURNING STATE WILL NOT BE SENT TO CLIENT
     //THIS PREVENTS SERVER OVERWRITING CLIENT INPUT
 
