@@ -213,7 +213,7 @@ const serverUpdate = () => {
 
         if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
           // console.log(`GOING TOO FAR!`);
-          deleteBullet(bullet.hash);
+          deleteBullet(bullet.hash,bullet.room);
         } else {
           utility.setBullet(bullet, bullet.room);
         }
