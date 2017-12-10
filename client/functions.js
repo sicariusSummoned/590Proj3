@@ -53,6 +53,7 @@ const syncBullets = (data) => {
     bullet.x = receivedBullet.x;
     bullet.y = receivedBullet.y;
     bullet.rotation = receivedBullet.rotation;
+    bullet.scale = receivedBullet.scale;
   }
 };
 
@@ -223,14 +224,19 @@ const turretRotation = () => {
     packet.rotations[i]= newRotation;
   }
 
-  console.log('packet!');
-  console.dir(packet);
+  //console.log('packet!');
+  //console.dir(packet);
 
   socket.emit('playerTurretUpdate', packet);
 
 };
 
-// scaling bullet size (for arc)
-const scaleBullet = (bulletHash) => {
+// function to do when a collision is found, from the server
+const collisionMade = (data) => {
+  console.log(`${data.playerHit} GOT HIT BY ${data.playerHitBy}`);
+};
 
+// scaling bullet size (for arc)
+const scaleBullet = (bullet) => {
+  // CALCULATED SERVER-SDE
 };

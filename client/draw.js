@@ -60,6 +60,14 @@ const redraw = (time) => {
       ctx.restore();
     }
       ctx.restore();
+    
+      // DEBUG ONLY, DRAW COLLISION CIRCLE
+      ctx.save();
+      ctx.fillStyle = 'blue';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, 30, 0, 2*Math.PI);
+      ctx.fill();
+      ctx.restore();
   }
 
 
@@ -72,20 +80,28 @@ const redraw = (time) => {
     ctx.save();
     ctx.translate(bullet.x, bullet.y);
     ctx.rotate(bullet.rotation * (Math.PI / 180));
-
-
+    
+    
     ctx.drawImage(
       bulletImg,
       0,
       0,
       20,
       10,
-      -20 / 2,
-      -10 / 2,
-      20,
-      10
+      (-20 * bullet.scale) / 2,
+      (-10 * bullet.scale) / 2,
+      20 * bullet.scale,
+      10 * bullet.scale
     );
 
+    ctx.restore();
+    
+    // DEBUG ONLY, DRAW COLLISION CIRCLE
+    ctx.save();
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(bullet.x, bullet.y, 10, 0, 2*Math.PI);
+    ctx.fill();
     ctx.restore();
   }
 
