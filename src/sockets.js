@@ -30,6 +30,7 @@ const sendPlayers = (roomNum) => {
       y: serverPlayer.y,
       rotation: serverPlayer.rotation,
       turrets: serverPlayer.turrets,
+      speed: serverPlayer.speed,
     };
   }
 
@@ -246,8 +247,8 @@ const serverUpdate = () => {
         if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
             // console.log(`GOING TOO FAR!`);
             deleteBullet(bullet.hash);
-          } else {
-            utility.setBullet(bullet, bullet.room);
+        } else {
+          utility.setBullet(bullet, bullet.room);
         }
       } else {
         console.log('UNDEFINED OR NULL BULLET');

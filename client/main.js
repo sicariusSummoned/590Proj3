@@ -6,6 +6,11 @@ let oceanBGImg;
 let explosionImg;
 let bulletImg;
 
+//UI
+let roomUIText;
+let gunsUIText;
+let enginesUIText;
+
 let players = {}; // object to hold all info to draw them on screen
 let bullets = {};
 let explosions = [];
@@ -41,6 +46,10 @@ const init = () => {
   bulletImg = document.querySelector("#bullet");
   explosionImg = document.querySelector("#explosion");
 
+  //UI elements
+  roomUIText = document.querySelector("#roomUI");
+  gunsUIText = document.querySelector("#gunsUI");
+  enginesUIText = document.querySelector("#enginesUI");
 
   canvas = document.querySelector("#canvas");
   ctx = canvas.getContext('2d');
@@ -53,8 +62,7 @@ const init = () => {
   socket.on('syncBullets', syncBullets);
   socket.on('deleteBullet', deleteBullet);
   socket.on('collisionMade', collisionMade);
-  // socket.on('generateRPC');
-
+  
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);
   document.body.addEventListener('keyup', keyUpHandler);
