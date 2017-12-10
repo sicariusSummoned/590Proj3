@@ -52,6 +52,14 @@ var redraw = function redraw(time) {
       ctx.restore();
     }
     ctx.restore();
+
+    // DEBUG ONLY, DRAW COLLISION CIRCLE
+    ctx.save();
+    ctx.fillStyle = 'blue';
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, 30, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.restore();
   }
 
   //loop and draw all bullets
@@ -64,8 +72,16 @@ var redraw = function redraw(time) {
     ctx.translate(bullet.x, bullet.y);
     ctx.rotate(bullet.rotation * (Math.PI / 180));
 
-    ctx.drawImage(bulletImg, 0, 0, 20, 10, -20 / 2, -10 / 2, 20, 10);
+    ctx.drawImage(bulletImg, 0, 0, 20, 10, -20 * bullet.scale / 2, -10 * bullet.scale / 2, 20 * bullet.scale, 10 * bullet.scale);
 
+    ctx.restore();
+
+    // DEBUG ONLY, DRAW COLLISION CIRCLE
+    ctx.save();
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(bullet.x, bullet.y, 10, 0, 2 * Math.PI);
+    ctx.fill();
     ctx.restore();
   }
 
@@ -179,6 +195,7 @@ var syncBullets = function syncBullets(data) {
     bullet.x = receivedBullet.x;
     bullet.y = receivedBullet.y;
     bullet.rotation = receivedBullet.rotation;
+    bullet.scale = receivedBullet.scale;
   }
 };
 
@@ -344,14 +361,21 @@ var turretRotation = function turretRotation() {
     packet.rotations[i] = newRotation;
   }
 
-  console.log('packet!');
-  console.dir(packet);
+  //console.log('packet!');
+  //console.dir(packet);
 
   socket.emit('playerTurretUpdate', packet);
 };
 
+// function to do when a collision is found, from the server
+var collisionMade = function collisionMade(data) {
+  console.log(data.playerHit + ' GOT HIT BY ' + data.playerHitBy);
+};
+
 // scaling bullet size (for arc)
-var scaleBullet = function scaleBullet(bulletHash) {};
+var scaleBullet = function scaleBullet(bullet) {
+  // CALCULATED SERVER-SDE
+};
 "use strict";
 
 //Initialize clientside vars here, hook up events and get document Elements
@@ -418,6 +442,7 @@ var init = function init() {
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
   socket.on('deleteBullet', deleteBullet);
+  socket.on('collisionMade', collisionMade);
 
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);

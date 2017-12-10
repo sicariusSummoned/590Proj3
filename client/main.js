@@ -63,6 +63,7 @@ const init = () => {
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
   socket.on('deleteBullet', deleteBullet);
+  socket.on('collisionMade', collisionMade);
   
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);
