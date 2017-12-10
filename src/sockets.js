@@ -40,6 +40,11 @@ const sendPlayers = (roomNum) => {
   return true;
 };
 
+// function to calculate collision between ship and bullets
+const checkCollision = (bullet, ship) => {
+  utility.checkHit(bullet.x, bullet.y, bullet.radius, ship.x, ship.y, ship.radius);
+};
+
 // delete Bullet
 const deleteBullet = (hash, roomNum) => {
   utility.removeBullet(hash);
@@ -217,25 +222,26 @@ const serverUpdate = () => {
 
         // scale bullet according to distance travelled
         if (bullet.distanceTravelled <= (bullet.maxDistance / 2)) {
-          bullet.scale += .1;
+          bullet.scale += 0.1;
         }
 
         if (bullet.distanceTravelled > (bullet.maxDistance / 2)) {
-          bullet.scale -= .1;
+          bullet.scale -= 0.1;
         }
 
         // check for collisions ONLY IN LAST 99.99% OF TRAVELLING
-        const percentTravelled = bullet.distanceTravelled * 100 / bullet.maxDistance;
+        let percentTravelled = bullet.distanceTravelled * 100;
+        percentTravelled /= bullet.maxDistance;
 
         if (percentTravelled >= 100) { // go through all players in room, check for collisions
-          for (let i = 0; i < playerKeys.length; i++) {
-            const player = players[playerKeys[i]];
+          for (let j = 0; j < playerKeys.length; j++) {
+            const player = players[playerKeys[j]];
 
-            if (bullet.ownerHash != player.hash) { // cannot collide with own bullets
+            if (bullet.ownerHash !== player.hash) { // cannot collide with own bullets
               if (checkCollision(bullet, player)) {
-                let data = {
+                const data = {
                   playerHit: player.hash,
-                  playerHitBy: bullet.ownerHash
+                  playerHitBy: bullet.ownerHash,
                 };
                 io.sockets.in(`${roomNum}`).emit('collisionMade', data);
                 deleteBullet(bullet.hash, bullet.room);
@@ -304,10 +310,6 @@ const playerTurretUpdate = (data) => {
   utility.setPlayer(player, player.room);
 };
 
-// function to calculate collision between ship and bullets
-const checkCollision = (bullet, ship) => {
-  return utility.checkHit(bullet.x, bullet.y, bullet.radius, ship.x, ship.y, ship.radius);
-};
 
 // function to ceate a new bullet for the player that was firing
 const playerFiring = (data) => {
