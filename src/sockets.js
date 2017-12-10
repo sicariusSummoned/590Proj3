@@ -51,7 +51,7 @@ const sendBullets = (roomNum) => {
   const sendable = {};
   const serverBullets = utility.getBulletsInRoom(roomNum);
   const keys = Object.keys(serverBullets);
-  
+
 
   for (let i = 0; i < keys.length; i++) {
     const serverBullet = serverBullets[keys[i]];
@@ -214,39 +214,39 @@ const serverUpdate = () => {
         const xDist = (bullet.originX - bullet.x) * (bullet.originX - bullet.x);
         const yDist = (bullet.originY - bullet.y) * (bullet.originY - bullet.y);
         bullet.distanceTravelled = Math.sqrt(xDist + yDist);
-        
+
         // scale bullet according to distance travelled
-        if(bullet.distanceTravelled <= (bullet.maxDistance / 2)) {
+        if (bullet.distanceTravelled <= (bullet.maxDistance / 2)) {
           bullet.scale += .1;
         }
-    
-        if(bullet.distanceTravelled > (bullet.maxDistance / 2)) {
+
+        if (bullet.distanceTravelled > (bullet.maxDistance / 2)) {
           bullet.scale -= .1;
         }
-        
-        // check for collisions ONLY IN LAST 95% OF TRAVELLING
+
+        // check for collisions ONLY IN LAST 99.99% OF TRAVELLING
         const percentTravelled = bullet.distanceTravelled * 100 / bullet.maxDistance;
-        
-        if(percentTravelled >= 95) { // go through all players in room, check for collisions
-          for(let i = 0; i < playerKeys.length; i++) {
+
+        if (percentTravelled >= 100) { // go through all players in room, check for collisions
+          for (let i = 0; i < playerKeys.length; i++) {
             const player = players[playerKeys[i]];
-            
-            if(bullet.ownerHash != player.hash) { // cannot collide with own bullets
-              if(checkCollision(bullet, player)) {
+
+            if (bullet.ownerHash != player.hash) { // cannot collide with own bullets
+              if (checkCollision(bullet, player)) {
                 let data = {
                   playerHit: player.hash,
                   playerHitBy: bullet.ownerHash
                 };
                 io.sockets.in(`${roomNum}`).emit('collisionMade', data);
-                deleteBullet(bullet.hash);
+                deleteBullet(bullet.hash, bullet.room);
                 break;
               }
             }
           }
-        } 
+        }
         if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
-            // console.log(`GOING TOO FAR!`);
-            deleteBullet(bullet.hash);
+          // console.log(`GOING TOO FAR!`);
+          deleteBullet(bullet.hash);
         } else {
           utility.setBullet(bullet, bullet.room);
         }
@@ -306,11 +306,7 @@ const playerTurretUpdate = (data) => {
 
 // function to calculate collision between ship and bullets
 const checkCollision = (bullet, ship) => {
-  const distance = Math.sqrt( ((bullet.x - ship.x) * (bullet.x = ship.x)) 
-                             + ((bullet.y - ship.y) * (bullet.y - ship.y)) 
-                            );
-  if(distance < bullet.radius + ship.radius) return true;
-  else return false;
+  return utility.checkHit(bullet.x, bullet.y, bullet.radius, ship.x, ship.y, ship.radius);
 };
 
 // function to ceate a new bullet for the player that was firing
