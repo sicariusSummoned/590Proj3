@@ -81,6 +81,12 @@ var redraw = function redraw(time) {
     **/
   }
 
+  for (var _i3 = 0; _i3 < splashes.length; _i3++) {
+    var splash = splashes[_i3];
+    //draw Splash
+
+  }
+
   //update all UI elements
   if (players[hash]) {
 
@@ -355,6 +361,7 @@ var shipTurretSmallImg = void 0;
 var oceanBGImg = void 0;
 var explosionImg = void 0;
 var bulletImg = void 0;
+var splashImg = void 0;
 
 //UI
 var roomUIText = void 0;
@@ -394,6 +401,7 @@ var init = function init() {
   shipTurretSmallImg = document.querySelector("#ship_Turret_Small");
   bulletImg = document.querySelector("#bullet");
   explosionImg = document.querySelector("#explosion");
+  splashImg = document.querySelector("#splash");
 
   //UI elements
   roomUIText = document.querySelector("#roomUI");

@@ -98,6 +98,13 @@ const redraw = (time) => {
     );
     **/
   }
+  
+  for (let i = 0; i < splashes.length; i++) {
+    const splash = splashes[i];
+    //draw Splash
+    
+    
+  }
 
   //update all UI elements
   if (players[hash]) {

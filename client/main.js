@@ -5,6 +5,7 @@ let shipTurretSmallImg;
 let oceanBGImg;
 let explosionImg;
 let bulletImg;
+let splashImg;
 
 //UI
 let roomUIText;
@@ -45,7 +46,8 @@ const init = () => {
   shipTurretSmallImg = document.querySelector("#ship_Turret_Small");
   bulletImg = document.querySelector("#bullet");
   explosionImg = document.querySelector("#explosion");
-
+  splashImg = document.querySelector("#splash");
+  
   //UI elements
   roomUIText = document.querySelector("#roomUI");
   gunsUIText = document.querySelector("#gunsUI");
