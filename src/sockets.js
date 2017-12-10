@@ -42,7 +42,7 @@ const sendPlayers = (roomNum) => {
 
 // function to calculate collision between ship and bullets
 const checkCollision = (bullet, ship) => {
-  utility.checkHit(bullet.x, bullet.y, bullet.radius, ship.x, ship.y, ship.radius);
+  return utility.checkHit(bullet.x, bullet.y, bullet.radius, ship.x, ship.y, ship.radius);
 };
 
 // delete Bullet

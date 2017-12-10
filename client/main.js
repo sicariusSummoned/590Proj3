@@ -6,6 +6,7 @@ let oceanBGImg;
 let explosionImg;
 let bulletImg;
 let splashImg;
+let oceanBGPageImg;
 
 //UI
 let roomUIText;
@@ -47,6 +48,7 @@ const init = () => {
   bulletImg = document.querySelector("#bullet");
   explosionImg = document.querySelector("#explosion");
   splashImg = document.querySelector("#splash");
+  oceanBGPageImg = document.querySelector("#oceanBG-page");
   
   //UI elements
   roomUIText = document.querySelector("#roomUI");

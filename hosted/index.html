@@ -16,18 +16,22 @@
     margin: 0;
     padding: 0;
     user-select: none;
+    color: white;
+    background-image: url(oceanBG-page.png);
+    background-repeat: repeat-y;
   }
-
+/*
   html {
     background-image: url(/assets/);
-    background-repeat: no-repeat;
+    background-repeat: repeat-y;
   }
-
+*/
   h3 {
     display: inline-block;
-    border: 1px solid black;
+    border: 1px solid white;
     margin-left: 20px;
     padding: 20px;
+    text-align: center;
   }
 
   img {
@@ -35,7 +39,7 @@
   }
 
   #title {
-    font-size: 64pt;
+    font-size: 48pt;
     width: 500px;
     margin: auto;
     padding: 0;
@@ -43,16 +47,16 @@
   }
 
   #subtitle {
-    font-size: 24pt;
+    font-size: 20pt;
     width: 900px;
     margin: auto;
     padding: 0px;
-    text-align: center;
+    text-align: left;
   }
 
   #display {
-    margin-top: 30px;
-    border: 1px solid black;
+    margin-top: px;
+    border: 1px solid white;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -64,7 +68,33 @@
   #ui {
     align-content: center;
     margin:auto;
-    max-width: 500px;
+    max-width: 800px;
+  }
+  
+  #adBlock1 {
+    border: 3px solid white;
+    text-align: center;
+    float: left;
+    max-width: 300px;
+    min-height: 700px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 3em;
+  }
+  
+  #adBlock2 {
+    border: 3px solid white;
+    text-align: center;
+    float: right;
+    max-width: 300px;
+    min-height: 700px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 7em;
+  }
+  
+  #gameSpace {
+    max-width: 100%;
   }
 
   
@@ -72,19 +102,46 @@
 </style>
 
 <body>
-  <h1 id="title">PROJECT 3</h1>
-  <h2 id="subtitle">Instructions here?</h2>
-
+  <h1 id="title">Warship Rumble!</h1>
+  
   <div id="ui">
     <h3>ROOM: <span id="roomUI"></span></h3>
     <h3>GUNS: <span id="gunsUI"></span></h3>
     <h3>ENGINES: <span id="enginesUI"></span></h3>
   </div>
 
+  <div id="gameSpace">
+  
+  <div id="adBlock1">
+    <h1>Instructions:</h1>
+    <h2>Shoot the center of enemy ships to destroy their turrets!</h2>
+    <h2>Ships are defeated when all 4 turrets are destroyed.</h2>
+    <h1>Controls:</h1>
+    <h2>
+      WASD or Arrow Keys: Movement
+    </h2>
+    <h2>
+      Mouse: Aim
+    </h2>
+    <h2>
+      Left-Click: Fire at Mouse Position
+    </h2>
+  </div>
+    
+  <div id="adBlock2">
+    <h2>
+      INSERT AD HERE!!!
+    </h2>
+  </div>  
+    
   <div id="display">
     <canvas id="canvas" height="800" width="1000">Use a Canvas compatible browser</canvas>
   </div>
-
+  
+  
+    
+  </div>
+  
   <img id="ship" src="/assets/ship.png" alt="ship" />
   <img id="ship_Turret_Small" src="/assets/ship_Turret_Small.png" alt="sTurret" />
   <img id="ship_Turret_Large" src="/assets/ship_Turret_Large.png" alt="lTurret" />
@@ -92,6 +149,7 @@
   <img id="explosion" src="/assets/explosion-sprite.png" alt="splosion" />
   <img id="bullet" src="/assets/Bullet.png" alt="bullet" />
   <img id="splash" src="/assets/splash.png" alt="splash"/>
+  <img id="oceanBG-page" src="/assets/oceanBG-page.png" alt="ocean-page"/>
 </body>
 
 </html>
