@@ -51,6 +51,12 @@ const deleteBullet = (hash, roomNum) => {
   io.sockets.in(`${roomNum}`).emit('deleteBullet', hash);
 };
 
+//delete Player
+const deletePlayer = (hash, roomNum) => {
+  utility.removePlayer(hash);
+  io.sockets.in(`${roomNum}`).emit('deletePlayer', hash);
+}
+
 // send Bullets
 const sendBullets = (roomNum) => {
   const sendable = {};
@@ -84,6 +90,23 @@ const sendAll = () => {
   }
 };
 
+//Hurt Player
+const hurtPlayer = (playerHash) => {
+  let player = utility.getPlayer(playerHash);
+
+  player.hp--;
+
+  if (player.hp <= 0) {
+    //Player is alive
+    player.turrets.pop();
+    player.hp = 4;
+
+    if (player.turrets.length <= 0) {
+      deletePlayer(player.hash);
+    }
+  }
+}
+
 
 // initialize new player
 const makeNewPlayer = (sock, playerHash, roomNum) => {
@@ -102,9 +125,10 @@ const makeNewPlayer = (sock, playerHash, roomNum) => {
     fX: 0,
     fY: 1,
     rotation: 90,
-    speed: 1,
+    speed: 0,
     turningState: 'none',
     radius: 30,
+    hp: 4,
     turrets: [
       {
         offsetX: 16,
@@ -244,6 +268,9 @@ const serverUpdate = () => {
                   playerHitBy: bullet.ownerHash,
                 };
                 io.sockets.in(`${roomNum}`).emit('collisionMade', data);
+
+                hurtPlayer(player.hash);
+
                 deleteBullet(bullet.hash, bullet.room);
                 break;
               }
@@ -265,6 +292,9 @@ const serverUpdate = () => {
 
 // function for changing the turningState of the player
 const playerTurning = (data) => {
+  if (!utility.getPlayer(data.hash)) {
+    return;
+  }
   const player = utility.getPlayer(data.hash);
   if (player !== null) {
     player.turningState = data.turningState;
@@ -275,7 +305,7 @@ const playerTurning = (data) => {
 // function for changing the speed of the player
 const playerThrottling = (data) => {
   const player = utility.getPlayer(data.hash);
-  if (player !== null) {
+  if (player !== null && player !== undefined) {
     if (data.accelerating) {
       if (player.speed === -0.25) {
         player.speed = 0; // make the player go back up to not moving
@@ -302,12 +332,12 @@ const playerTurretUpdate = (data) => {
   const player = utility.getPlayer(data.hash);
 
 
-  if (player !== null) {
+  if (player !== null && player !== undefined) {
     for (let i = 0; i < player.turrets.length; i++) {
       player.turrets[i].rotation = data.rotations[i];
     }
+    utility.setPlayer(player, player.room);
   }
-  utility.setPlayer(player, player.room);
 };
 
 
@@ -316,6 +346,9 @@ const playerFiring = (data) => {
   // console.log('fire!');
 
   const player = utility.getPlayer(data.ownerHash);
+  if (player == null || player == undefined) {
+    return;
+  }
 
   console.log(player.turrets.length);
   for (let i = 0; i < player.turrets.length; i++) {

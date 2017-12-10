@@ -87,6 +87,10 @@ const deleteBullet = (data) => {
   delete bullets[data];
 };
 
+const deletePlayer = (data) => {
+  delete players[data];
+};
+
 // functions to handle keyUp and keyDown
 const keyDownHandler = (e) => {
   let player = players[hash];
@@ -191,7 +195,7 @@ const sendThrottle = (accelerating) => {
   } else {
     packet.accelerating = false;
   }
-
+  
   socket.emit('playerThrottling', packet);
 };
 

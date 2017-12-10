@@ -231,6 +231,10 @@ var deleteBullet = function deleteBullet(data) {
   delete bullets[data];
 };
 
+var deletePlayer = function deletePlayer(data) {
+  delete players[data];
+};
+
 // functions to handle keyUp and keyDown
 var keyDownHandler = function keyDownHandler(e) {
   var player = players[hash];
@@ -447,6 +451,7 @@ var init = function init() {
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
   socket.on('deleteBullet', deleteBullet);
+  socket.on('deletePlayer', deletePlayer);
   socket.on('collisionMade', collisionMade);
 
   // key up / key down event listener
@@ -455,12 +460,16 @@ var init = function init() {
   // mouse move listener
   window.addEventListener('mousemove', function (e) {
     getMousePosition(canvas, e);
-    turretRotation();
+    if (players[hash]) {
+      turretRotation();
+    }
   });
 
   // click event listener
   window.addEventListener('click', function (e) {
-    fireCannons();
+    if (players[hash]) {
+      fireCannons();
+    }
   });
 
   requestAnimationFrame(redraw);
@@ -479,5 +488,7 @@ var update = function update() {
   //Scale all bullets based on distance from their half way point
 
   //sendTurning
-  sendTurning();
+  if (players[hash]) {
+    sendTurning();
+  }
 };

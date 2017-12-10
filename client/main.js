@@ -49,7 +49,7 @@ const init = () => {
   explosionImg = document.querySelector("#explosion");
   splashImg = document.querySelector("#splash");
   oceanBGPageImg = document.querySelector("#oceanBG-page");
-  
+
   //UI elements
   roomUIText = document.querySelector("#roomUI");
   gunsUIText = document.querySelector("#gunsUI");
@@ -65,22 +65,27 @@ const init = () => {
   socket.on('syncPlayers', syncPlayers);
   socket.on('syncBullets', syncBullets);
   socket.on('deleteBullet', deleteBullet);
+  socket.on('deletePlayer', deletePlayer);
   socket.on('collisionMade', collisionMade);
-  
+
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);
   document.body.addEventListener('keyup', keyUpHandler);
   // mouse move listener
   window.addEventListener('mousemove', function (e) {
     getMousePosition(canvas, e);
-    turretRotation();
+    if (players[hash]) {
+      turretRotation();
+    }
   });
 
   // click event listener
   window.addEventListener('click', function (e) {
-    fireCannons();
+    if (players[hash]) {
+      fireCannons();
+    }
   });
-  
+
   requestAnimationFrame(redraw);
 
   setInterval(update, 30);
