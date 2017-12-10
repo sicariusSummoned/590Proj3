@@ -389,6 +389,7 @@ var oceanBGImg = void 0;
 var explosionImg = void 0;
 var bulletImg = void 0;
 var splashImg = void 0;
+var oceanBGPageImg = void 0;
 
 //UI
 var roomUIText = void 0;
@@ -429,6 +430,7 @@ var init = function init() {
   bulletImg = document.querySelector("#bullet");
   explosionImg = document.querySelector("#explosion");
   splashImg = document.querySelector("#splash");
+  oceanBGPageImg = document.querySelector("#oceanBG-page");
 
   //UI elements
   roomUIText = document.querySelector("#roomUI");
