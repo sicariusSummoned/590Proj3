@@ -111,6 +111,22 @@ const hurtPlayer = (playerHash) => {
 }
 
 
+const sendNewExplosion = (x,y,roomNum) => {
+  let explosionPackage = {
+    x: x,
+    y: y,
+  };
+  io.sockets.in(`${roomNum}`).emit('newExplosion',explosionPackage);
+};
+
+const sendNewSplash = (x,y, roomNum) =>{
+  let splashPackage = {
+    x:x,
+    y:y,
+  };
+  io.sockets.in(`${roomNum}`).emit('newSplash', splashPackage);
+}
+
 // initialize new player
 const makeNewPlayer = (sock, playerHash, roomNum) => {
   console.log(`making player in room ${roomNum}`);
@@ -283,7 +299,7 @@ const serverUpdate = () => {
                 io.sockets.in(`${roomNum}`).emit('collisionMade', data);
 
                 hurtPlayer(player.hash);
-
+                sendNewExplosion(bullet.x,bullet.y,bullet.room);
                 deleteBullet(bullet.hash, bullet.room);
                 break;
               }
@@ -292,7 +308,8 @@ const serverUpdate = () => {
         }
         if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
           // console.log(`GOING TOO FAR!`);
-          deleteBullet(bullet.hash);
+          deleteBullet(bullet.hash, bullet.room);
+          sendNewSplash(bullet.x,bullet.y,bullet.room);
         } else {
           utility.setBullet(bullet, bullet.room);
         }

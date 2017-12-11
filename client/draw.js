@@ -114,21 +114,41 @@ const redraw = (time) => {
     const explosion = explosions[i];
 
     //draw Explosion
-    /**
+    
+    //96 wide
+    //96 high
     ctx.drawImage(
       explosionImg,
+      96*explosion.currFrame,
+      96*explosion.currRow,
+      96,
+      96,
+      explosion.x - 48,
+      explosion.y - 48,
+      96,
+      96,
     );
-    **/
+    
   }
   
-  /**
+  
   for (let i = 0; i < splashes.length; i++) {
     const splash = splashes[i];
     //draw Splash
-  
     
+    ctx.drawImage(
+      splashImg,
+      40*splash.currFrame,
+      0,
+      40,
+      88,
+      splash.x - 20,
+      splash.y -44,
+      40,
+      88,
+    );
   }
-  **/
+  
   
   //update all UI elements
   if (players[hash]) {

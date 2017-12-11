@@ -94,21 +94,18 @@ var redraw = function redraw(time) {
     var explosion = explosions[_i2];
 
     //draw Explosion
-    /**
-    ctx.drawImage(
-      explosionImg,
-    );
-    **/
+
+    //96 wide
+    //96 high
+    ctx.drawImage(explosionImg, 96 * explosion.currFrame, 96 * explosion.currRow, 96, 96, explosion.x - 48, explosion.y - 48, 96, 96);
   }
 
-  /**
-  for (let i = 0; i < splashes.length; i++) {
-    const splash = splashes[i];
+  for (var _i3 = 0; _i3 < splashes.length; _i3++) {
+    var splash = splashes[_i3];
     //draw Splash
-  
-    
+
+    ctx.drawImage(splashImg, 40 * splash.currFrame, 0, 40, 88, splash.x - 20, splash.y - 44, 40, 88);
   }
-  **/
 
   //update all UI elements
   if (players[hash]) {
@@ -181,10 +178,6 @@ var syncPlayers = function syncPlayers(data) {
   }
 };
 
-var cullPlayers = function cullPlayers(data) {// delete players we dont need anymore
-
-};
-
 // sync bullets function - takes data from server and updates client data accordingly
 var syncBullets = function syncBullets(data) {
   var keys = Object.keys(data);
@@ -208,12 +201,29 @@ var syncBullets = function syncBullets(data) {
 };
 
 // RPC for explosions
-var generateExplosion = function generateExplosion(data) {
+var addExplosion = function addExplosion(data) {
   var explosionObj = {
     x: data.x,
     y: data.y,
-    framesRemaining: 0 // WARNING - REPLACE WITH # OF FRAMES ON SPRITESHEET
+    currFrame: 0,
+    currRow: 0,
+    currDelay: 0 //Number of frames to wait before changing frame
+    //5 wide, 3 tall
   };
+  explosions.push(explosionObj);
+};
+
+var addSplash = function addSplash(data) {
+  var splashObj = {
+    x: data.x,
+    y: data.y,
+    framesRemaining: 25,
+    currFrame: 0,
+    currRow: 0,
+    currDelay: 0 //Number of frames to wait before changing frame
+    //25 wide, 1 tall
+  };
+  splashes.push(splashObj);
 };
 
 // fire cannon function - notify server bullet has been fired
@@ -412,6 +422,7 @@ var enginesUIText = void 0;
 var players = {}; // object to hold all info to draw them on screen
 var bullets = {};
 var explosions = [];
+var splashes = [];
 
 // server info
 var socket = void 0;
@@ -462,6 +473,8 @@ var init = function init() {
   socket.on('deleteBullet', deleteBullet);
   socket.on('deletePlayer', deletePlayer);
   socket.on('collisionMade', collisionMade);
+  socket.on('newExplosion', addExplosion);
+  socket.on('newSplash', addSplash);
 
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);
@@ -492,9 +505,39 @@ window.onload = init;
 //This is where our update loop goes if we decide to update anything client side
 
 var update = function update() {
-  //update explosions lifetimes
+  //update explosions
+  for (var i = 0; i < explosions.length; i++) {
+    var explosion = explosions[i];
 
-  //Scale all bullets based on distance from their half way point
+    explosion.currDelay++;
+
+    if (explosion.currDelay > 2) {
+      explosion.currDelay = 0;
+      explosion.currFrame++;
+      if (explosion.currFrame > 5) {
+        explosion.currFrame = 0;
+        explosion.currRow++;
+        if (explosion.currRow > 3) {
+          explosions.slice(i, 1);
+        }
+      }
+    }
+  }
+
+  //update splashes
+  for (var _i = 0; _i < splashes.length; _i++) {
+    var splash = splashes[_i];
+
+    splash.currDelay++;
+
+    if (splash.currDelay > 2) {
+      splash.currDelay = 0;
+      splash.currFrame++;
+      if (splash.currFrame > 25) {
+        splashes.slice(_i, 1);
+      }
+    }
+  }
 
   //sendTurning
   if (players[hash]) {

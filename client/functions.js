@@ -33,9 +33,7 @@ const syncPlayers = (data) => {
   }
 };
 
-const cullPlayers = (data) => { // delete players we dont need anymore
 
-};
 
 // sync bullets function - takes data from server and updates client data accordingly
 const syncBullets = (data) => {
@@ -59,13 +57,30 @@ const syncBullets = (data) => {
 };
 
 // RPC for explosions
-const generateExplosion = (data) => {
+const addExplosion = (data) => {
   let explosionObj = {
     x: data.x,
     y: data.y,
-    framesRemaining: 0, // WARNING - REPLACE WITH # OF FRAMES ON SPRITESHEET
+    currFrame:0,
+    currRow:0,
+    currDelay:0, //Number of frames to wait before changing frame
+    //5 wide, 3 tall
   };
+  explosions.push(explosionObj);
 };
+
+const addSplash = (data) =>{
+  let splashObj = {
+    x: data.x,
+    y: data.y,
+    framesRemaining: 25, 
+    currFrame:0,
+    currRow:0,
+    currDelay:0, //Number of frames to wait before changing frame
+    //25 wide, 1 tall
+  }
+  splashes.push(splashObj);
+}
 
 // fire cannon function - notify server bullet has been fired
 const fireCannons = () => {

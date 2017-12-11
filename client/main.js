@@ -16,6 +16,7 @@ let enginesUIText;
 let players = {}; // object to hold all info to draw them on screen
 let bullets = {};
 let explosions = [];
+let splashes = [];
 
 // server info
 let socket;
@@ -67,6 +68,8 @@ const init = () => {
   socket.on('deleteBullet', deleteBullet);
   socket.on('deletePlayer', deletePlayer);
   socket.on('collisionMade', collisionMade);
+  socket.on('newExplosion', addExplosion);
+  socket.on('newSplash', addSplash);
 
   // key up / key down event listener
   document.body.addEventListener('keydown', keyDownHandler);
