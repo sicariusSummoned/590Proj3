@@ -95,14 +95,16 @@ const hurtPlayer = (playerHash) => {
   let player = utility.getPlayer(playerHash);
 
   player.hp--;
+  console.log(`Current HP: ${player.hp}`);
 
   if (player.hp <= 0) {
     //Player is alive
     player.turrets.pop();
     player.hp = 4;
-
+    console.log(`Turrets left: ${player.turrets.length}`);
     if (player.turrets.length <= 0) {
-      deletePlayer(player.hash);
+      console.log(`Deleting player ${player.hash}`);
+      deletePlayer(player.hash, player.room);
     }
   }
 }
@@ -161,6 +163,15 @@ const makeNewPlayer = (sock, playerHash, roomNum) => {
   sendPlayers(roomNum);
 };
 
+const playerRespawn = (sock) =>{
+  const socket = sock;
+  
+  socket.on('playerRespawn', () => {
+    console.log(`Player ${socket.hash} respawning`);
+    makeNewPlayer(socket, socket.hash, socket.room);
+  });
+}
+
 // disconnect code
 const onDisconnect = (sock) => {
   const socket = sock;
@@ -169,6 +180,8 @@ const onDisconnect = (sock) => {
     console.log('user disconnected');
 
     // remove player data from players object
+    let player = utility.getPlayer(socket.hash);
+    deletePlayer(player.hash, player.room);
     utility.removePlayer(socket.hash);
     // tell socket to leave
     socket.leave();
@@ -223,7 +236,6 @@ const serverUpdate = () => {
 
         if (player.y < -110) {
           player.y = 909;
-          console.log(player.y);
         }
 
         utility.setPlayer(player, roomNum);
@@ -350,14 +362,13 @@ const playerFiring = (data) => {
     return;
   }
 
-  console.log(player.turrets.length);
   for (let i = 0; i < player.turrets.length; i++) {
     const turret = player.turrets[i];
-    console.log(`In loop ${i}`);
-    console.log(`turrOffsets: ${turret.offsetX} ${turret.offsetY}`);
+    //console.log(`In loop ${i}`);
+    //console.log(`turrOffsets: ${turret.offsetX} ${turret.offsetY}`);
 
     const hash = xxh.h32(`${Math.random() * 3}${new Date().getTime}`, 0xCAFEBABE).toString(16);
-    console.log(hash);
+    //console.log(hash);
 
     const rotation = turret.rotation + player.rotation;
 
@@ -441,6 +452,7 @@ const configure = (ioServer) => {
       return;
     }
 
+    socket.room = roomToJoin;
     socket.join(`${roomToJoin}`);
 
     const hash = xxh.h32(`${socket.id}${new Date().getTime}`, 0xCAFEBABE).toString(16);
@@ -455,6 +467,7 @@ const configure = (ioServer) => {
     socket.on('playerThrottling', playerThrottling);
     socket.on('playerTurretUpdate', playerTurretUpdate);
     socket.on('playerFiring', playerFiring);
+    playerRespawn(socket);
     onDisconnect(socket);
   });
 };

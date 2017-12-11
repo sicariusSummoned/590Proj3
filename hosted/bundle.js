@@ -233,6 +233,10 @@ var deleteBullet = function deleteBullet(data) {
 
 var deletePlayer = function deletePlayer(data) {
   delete players[data];
+  if (data === hash) {
+    socket.emit('playerRespawn');
+    console.log('sending respawn request');
+  }
 };
 
 // functions to handle keyUp and keyDown
@@ -242,7 +246,7 @@ var keyDownHandler = function keyDownHandler(e) {
 
   //A or Left Arrow
   if (keyPressed === 65 || keyPressed === 37) {
-    console.log('LEFT HELD');
+    //console.log('LEFT HELD');
     //Set player turning state to 'left'
     prevTurningState = turningState;
     turningState = 'left';
@@ -250,7 +254,7 @@ var keyDownHandler = function keyDownHandler(e) {
 
   //D or Right Arrow
   if (keyPressed === 68 || keyPressed === 39) {
-    console.log('RIGHT HELD');
+    //console.log('RIGHT HELD');
     //Set player turning state to 'right'
     prevTurningState = turningState;
     turningState = 'right';
@@ -268,14 +272,14 @@ var keyUpHandler = function keyUpHandler(e) {
 
   //W or Up Arrow
   if (keyPressed === 87 || keyPressed === 38) {
-    console.log('UP RELEASED');
+    //console.log('UP RELEASED');
     //Send throttle up request to server
     sendThrottle(true);
   }
 
   //A or Left Arrow
   if (keyPressed === 65 || keyPressed === 37) {
-    console.log('LEFT RELEASED');
+    //console.log('LEFT RELEASED');
     //Set player turning state to 'none'
     prevTurningState = turningState;
     turningState = 'none';
@@ -283,14 +287,14 @@ var keyUpHandler = function keyUpHandler(e) {
 
   //S or Down Arrow
   if (keyPressed === 83 || keyPressed === 40) {
-    console.log('DOWN RELEASED');
+    //console.log('DOWN RELEASED');
     //Send throttle down request to server
     sendThrottle(false);
   }
 
   //D or Right Arrow
   if (keyPressed === 68 || keyPressed === 39) {
-    console.log('RIGHT RELEASED');
+    //console.log('RIGHT RELEASED');
     //Set player turning state to 'none'
     prevTurningState = turningState;
     turningState = 'none';
