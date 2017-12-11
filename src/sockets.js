@@ -52,11 +52,11 @@ const deleteBullet = (hash, roomNum) => {
   io.sockets.in(`${roomNum}`).emit('deleteBullet', hash);
 };
 
-//delete Player
+// delete Player
 const deletePlayer = (hash, roomNum) => {
   utility.removePlayer(hash);
   io.sockets.in(`${roomNum}`).emit('deletePlayer', hash);
-}
+};
 
 // send Bullets
 const sendBullets = (roomNum) => {
@@ -91,15 +91,15 @@ const sendAll = () => {
   }
 };
 
-//Hurt Player
+// Hurt Player
 const hurtPlayer = (playerHash) => {
-  let player = utility.getPlayer(playerHash);
+  const player = utility.getPlayer(playerHash);
 
   player.hp--;
   console.log(`Current HP: ${player.hp}`);
 
   if (player.hp <= 0) {
-    //Player is alive
+    // Player is alive
     player.turrets.pop();
     player.hp = 4;
     console.log(`Turrets left: ${player.turrets.length}`);
@@ -108,24 +108,24 @@ const hurtPlayer = (playerHash) => {
       deletePlayer(player.hash, player.room);
     }
   }
-}
-
-
-const sendNewExplosion = (x,y,roomNum) => {
-  let explosionPackage = {
-    x: x,
-    y: y,
-  };
-  io.sockets.in(`${roomNum}`).emit('newExplosion',explosionPackage);
 };
 
-const sendNewSplash = (x,y, roomNum) =>{
-  let splashPackage = {
-    x:x,
-    y:y,
+
+const sendNewExplosion = (x, y, roomNum) => {
+  const explosionPackage = {
+    x,
+    y,
+  };
+  io.sockets.in(`${roomNum}`).emit('newExplosion', explosionPackage);
+};
+
+const sendNewSplash = (x, y, roomNum) => {
+  const splashPackage = {
+    x,
+    y,
   };
   io.sockets.in(`${roomNum}`).emit('newSplash', splashPackage);
-}
+};
 
 // initialize new player
 const makeNewPlayer = (sock, playerHash, roomNum) => {
@@ -180,14 +180,14 @@ const makeNewPlayer = (sock, playerHash, roomNum) => {
   sendPlayers(roomNum);
 };
 
-const playerRespawn = (sock) =>{
+const playerRespawn = (sock) => {
   const socket = sock;
-  
+
   socket.on('playerRespawn', () => {
     console.log(`Player ${socket.hash} respawning`);
     makeNewPlayer(socket, socket.hash, socket.room);
   });
-}
+};
 
 // disconnect code
 const onDisconnect = (sock) => {
@@ -197,7 +197,7 @@ const onDisconnect = (sock) => {
     console.log('user disconnected');
 
     // remove player data from players object
-    let player = utility.getPlayer(socket.hash);
+    const player = utility.getPlayer(socket.hash);
     deletePlayer(player.hash, player.room);
     utility.removePlayer(socket.hash);
     // tell socket to leave
@@ -299,7 +299,7 @@ const serverUpdate = () => {
                 io.sockets.in(`${roomNum}`).emit('collisionMade', data);
 
                 hurtPlayer(player.hash);
-                sendNewExplosion(bullet.x,bullet.y,bullet.room);
+                sendNewExplosion(bullet.x, bullet.y, bullet.room);
                 deleteBullet(bullet.hash, bullet.room);
                 break;
               }
@@ -309,7 +309,7 @@ const serverUpdate = () => {
         if (bullet.distanceTravelled >= bullet.maxDistance) { // if too far, delete bullet
           // console.log(`GOING TOO FAR!`);
           deleteBullet(bullet.hash, bullet.room);
-          sendNewSplash(bullet.x,bullet.y,bullet.room);
+          sendNewSplash(bullet.x, bullet.y, bullet.room);
         } else {
           utility.setBullet(bullet, bullet.room);
         }
@@ -376,17 +376,17 @@ const playerFiring = (data) => {
   // console.log('fire!');
 
   const player = utility.getPlayer(data.ownerHash);
-  if (player == null || player == undefined) {
+  if (player === null || player === undefined) {
     return;
   }
 
   for (let i = 0; i < player.turrets.length; i++) {
     const turret = player.turrets[i];
-    //console.log(`In loop ${i}`);
-    //console.log(`turrOffsets: ${turret.offsetX} ${turret.offsetY}`);
+    // console.log(`In loop ${i}`);
+    // console.log(`turrOffsets: ${turret.offsetX} ${turret.offsetY}`);
 
     const hash = xxh.h32(`${Math.random() * 3}${new Date().getTime}`, 0xCAFEBABE).toString(16);
-    //console.log(hash);
+    // console.log(hash);
 
     const rotation = turret.rotation + player.rotation;
 
