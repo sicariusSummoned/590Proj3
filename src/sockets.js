@@ -30,6 +30,7 @@ const sendPlayers = (roomNum) => {
       y: serverPlayer.y,
       rotation: serverPlayer.rotation,
       turrets: serverPlayer.turrets,
+      hp: serverPlayer.hp,
       speed: serverPlayer.speed,
     };
   }

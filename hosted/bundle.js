@@ -54,12 +54,14 @@ var redraw = function redraw(time) {
     ctx.restore();
 
     // DEBUG ONLY, DRAW COLLISION CIRCLE
+    /**
     ctx.save();
     ctx.fillStyle = 'blue';
     ctx.beginPath();
-    ctx.arc(player.x, player.y, 30, 0, 2 * Math.PI);
+    ctx.arc(player.x, player.y, 30, 0, 2*Math.PI);
     ctx.fill();
     ctx.restore();
+    **/
   }
 
   //loop and draw all bullets
@@ -77,12 +79,14 @@ var redraw = function redraw(time) {
     ctx.restore();
 
     // DEBUG ONLY, DRAW COLLISION CIRCLE
+    /**
     ctx.save();
     ctx.fillStyle = 'red';
     ctx.beginPath();
-    ctx.arc(bullet.x, bullet.y, 10, 0, 2 * Math.PI);
+    ctx.arc(bullet.x, bullet.y, 10, 0, 2*Math.PI);
     ctx.fill();
     ctx.restore();
+    **/
   }
 
   //loop and draw all explosions
@@ -111,8 +115,9 @@ var redraw = function redraw(time) {
 
     roomUIText.textContent = '#' + (players[hash].room + 1);
 
-    //Update Gun status
-    gunsUIText.textContent = 'Ready to Fire!';
+    //Update Hull status
+
+    hullUIText.textContent = players[hash].turrets.length + '/4 ';
     //Update Engine status
 
     var engineStatusText = '';
@@ -401,7 +406,7 @@ var oceanBGPageImg = void 0;
 
 //UI
 var roomUIText = void 0;
-var gunsUIText = void 0;
+var hullUIText = void 0;
 var enginesUIText = void 0;
 
 var players = {}; // object to hold all info to draw them on screen
@@ -442,7 +447,7 @@ var init = function init() {
 
   //UI elements
   roomUIText = document.querySelector("#roomUI");
-  gunsUIText = document.querySelector("#gunsUI");
+  hullUIText = document.querySelector("#hullUI");
   enginesUIText = document.querySelector("#enginesUI");
 
   canvas = document.querySelector("#canvas");

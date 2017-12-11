@@ -10,7 +10,7 @@ let oceanBGPageImg;
 
 //UI
 let roomUIText;
-let gunsUIText;
+let hullUIText;
 let enginesUIText;
 
 let players = {}; // object to hold all info to draw them on screen
@@ -52,7 +52,7 @@ const init = () => {
 
   //UI elements
   roomUIText = document.querySelector("#roomUI");
-  gunsUIText = document.querySelector("#gunsUI");
+  hullUIText = document.querySelector("#hullUI");
   enginesUIText = document.querySelector("#enginesUI");
 
   canvas = document.querySelector("#canvas");

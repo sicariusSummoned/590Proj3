@@ -62,12 +62,14 @@ const redraw = (time) => {
       ctx.restore();
     
       // DEBUG ONLY, DRAW COLLISION CIRCLE
+      /**
       ctx.save();
       ctx.fillStyle = 'blue';
       ctx.beginPath();
       ctx.arc(player.x, player.y, 30, 0, 2*Math.PI);
       ctx.fill();
       ctx.restore();
+      **/
   }
 
 
@@ -97,12 +99,14 @@ const redraw = (time) => {
     ctx.restore();
     
     // DEBUG ONLY, DRAW COLLISION CIRCLE
+    /**
     ctx.save();
     ctx.fillStyle = 'red';
     ctx.beginPath();
     ctx.arc(bullet.x, bullet.y, 10, 0, 2*Math.PI);
     ctx.fill();
     ctx.restore();
+    **/
   }
 
   //loop and draw all explosions
@@ -131,8 +135,9 @@ const redraw = (time) => {
 
     roomUIText.textContent = `#${players[hash].room +1}`;
 
-    //Update Gun status
-    gunsUIText.textContent = `Ready to Fire!`;
+    //Update Hull status
+    
+    hullUIText.textContent = `${players[hash].turrets.length}/4 `;
     //Update Engine status
 
     let engineStatusText = '';
