@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-  <title>Project 3</title>
+  <title>Project 3 - Warship Rumple</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script src="/assets/bundle.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
 </head>
 
 <style>
@@ -19,6 +20,7 @@
     color: white;
     background-image: url(./assets/oceanBG-page.png);
     background-repeat: repeat-y;
+    font-family: 'Russo One', sans-serif;
   }
 /*
   html {
@@ -29,9 +31,17 @@
   h3 {
     display: inline-block;
     border: 1px solid white;
+    border-radius: 5px;
     margin-left: 20px;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    max-height: 50px;
+    width: auto;
+  }
+  
+  h2 {
+    font-size: 16pt;
   }
 
   img {
@@ -39,23 +49,14 @@
   }
 
   #title {
-    font-size: 48pt;
+    font-size: 42pt;
     width: 500px;
     margin: auto;
     padding: 0;
     text-align: center;
   }
 
-  #subtitle {
-    font-size: 20pt;
-    width: 900px;
-    margin: auto;
-    padding: 0px;
-    text-align: left;
-  }
-
   #display {
-    margin-top: px;
     border: 1px solid white;
     display: block;
     margin-left: auto;
@@ -67,9 +68,12 @@
 
   #ui {
     align-content: center;
-    margin:auto;
+    margin: auto;
     max-width: 800px;
+    max-height: 50px;
+    margin-bottom: 20px;
   }
+
   
   #adBlock1 {
     border: 3px solid white;
@@ -80,6 +84,8 @@
     padding-left: 10px;
     padding-right: 10px;
     margin-left: 3em;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
   }
   
   #adBlock2 {
@@ -91,6 +97,8 @@
     padding-left: 10px;
     padding-right: 10px;
     margin-right: 7em;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
   }
   
   #gameSpace {
@@ -106,19 +114,23 @@
   
   <div id="ui">
     <h3>ROOM: <span id="roomUI"></span></h3>
-    <h3>HULL STATUS: <span id="hullUI"></span></h3>
+    <h3>TURRET STATUS: <span id="hullUI"></span></h3>
     <h3>ENGINES: <span id="enginesUI"></span></h3>
   </div>
 
   <div id="gameSpace">
   
   <div id="adBlock1">
-    <h1>Instructions:</h1>
+    <h1>Mission Briefing:</h1>
     <h2>Shoot the center of enemy ships to destroy their turrets!</h2>
     <h2>Ships are defeated when all 4 turrets are destroyed.</h2>
+    <h2>................................................</h2>
     <h1>Controls:</h1>
     <h2>
-      WASD or Arrow Keys: Movement
+      AD or Left/Right Arrow Keys: Turning
+    </h2>
+    <h2>
+      WS or Up/Down Arrow Keys: Increase/Decrease Engines
     </h2>
     <h2>
       Mouse: Aim

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 //This is where we're putting the draw loop
 
@@ -24,6 +24,7 @@ var redraw = function redraw(time) {
     ctx.save();
     ctx.translate(player.x, player.y);
     ctx.rotate(player.rotation * (Math.PI / 180));
+    if (hash !== playerKeys[i]) ctx.filter = "hue-rotate(40deg)";
     ctx.drawImage(shipImg, // our source image
     0, //Source X
     0, //Source Y
@@ -110,11 +111,11 @@ var redraw = function redraw(time) {
   //update all UI elements
   if (players[hash]) {
 
-    roomUIText.textContent = '#' + (players[hash].room + 1);
+    roomUIText.textContent = "#" + (players[hash].room + 1);
 
     //Update Hull status
 
-    hullUIText.textContent = players[hash].turrets.length + '/4 ';
+    hullUIText.textContent = players[hash].turrets.length + "/4 ";
     //Update Engine status
 
     var engineStatusText = '';
@@ -135,7 +136,7 @@ var redraw = function redraw(time) {
         engineStatusText = 'Full Reverse';
         break;
     }
-    enginesUIText.textContent = '' + engineStatusText;
+    enginesUIText.textContent = "" + engineStatusText;
   } else {
     console.log("Don't have player yet.");
   }

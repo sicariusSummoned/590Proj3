@@ -23,6 +23,7 @@ const redraw = (time) => {
     ctx.save();
     ctx.translate(player.x, player.y);
     ctx.rotate(player.rotation * (Math.PI / 180));
+    if(hash !== playerKeys[i]) ctx.filter = "hue-rotate(40deg)";
     ctx.drawImage(
       shipImg, // our source image
       0, //Source X
